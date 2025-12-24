@@ -1,56 +1,38 @@
 name: Playwright MSTest
-
 on:
     workflow_dispatch:
-
-
 jobs:
   test:
     runs-on: windows-latest
     env:
       CI: "true"
-
     steps:
       - uses: actions/checkout@v4
-
       - name: Setup .NET
         uses: actions/setup-dotnet@v4
         with:
           dotnet-version: "8.0.x"
-
       - name: Restore
         run: dotnet restore
-
       - name: Build
-        run: dotnet build --configuration Debug --no-incremental --force
-
+        run: dotnet build --configuration Debug
       - name: Restore Playwright auth state
         shell: pwsh
         run: |
           New-Item -ItemType Directory -Force -Path SSO | Out-Null
           $bytes = [Convert]::FromBase64String("${{ secrets.PLAYWRIGHT_AUTHSTATE_B64 }}")
           [IO.File]::WriteAllBytes("SSO\authState.json", $bytes)
-
       - name: Install Playwright browsers
         shell: pwsh
         run: |
           .\bin\Debug\net8.0\playwright.ps1 install
-
+     
       - name: Test (only SmokeTestStaging)
         shell: pwsh
         run: |
-            dotnet vstest bin\Debug\net8.0\QA.AutomationTests.dll `
+          dotnet vstest bin\Debug\net8.0\QA.AutomationTests.dll `
             /Tests:SmokeTestStaging `
             /Logger:"trx;LogFileName=test-results.trx"
-
-      - name: Test (only SmokeTestStaging)
-        shell: pwsh
-        run: |
-            dotnet test .\QA.AutomationTests.csproj --configuration Debug `
-            --filter "FullyQualifiedName~SmokeTestStaging" `
-            --logger "trx;LogFileName=test-results.trx" `
-            --results-directory TestResults `
-            --verbosity detailed
             
       - name: Upload test results
         if: always()
