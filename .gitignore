@@ -1,0 +1,62 @@
+# ===============================
+# .NET build output
+# ===============================
+bin/
+obj/
+
+# ===============================
+# User-specific files
+# ===============================
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+# ===============================
+# Test results & reports
+# ===============================
+TestResults/
+**/TestResults/
+test-results/
+AskCuidoResults/
+**/test-results/
+
+# ===============================
+# Playwright artifacts
+# ===============================
+**/playwright-report/
+**/playwright/.cache/
+**/playwright/.auth/
+**/*.zip
+
+# ===============================
+# Sensitive auth / state files
+# ===============================
+SSO/authState.json
+**/SSO/authState.json
+
+# ===============================
+# Logs
+# ===============================
+*.log
+
+# ===============================
+# IDE / editor files
+# ===============================
+.vs/
+.vscode/
+.idea/
+
+# ===============================
+# OS junk
+# ===============================
+.DS_Store
+Thumbs.db
+
+# ===============================
+# Node (just in case)
+# ===============================
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
