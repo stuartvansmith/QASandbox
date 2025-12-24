@@ -35,9 +35,9 @@ jobs:
         shell: pwsh
         run: |
           .\bin\Debug\net8.0\playwright.ps1 install
-
+     
       - name: Test
-        run: dotnet test --configuration Debug --filter "TestCategory=Smoke" --logger "trx;LogFileName=test-results.trx"
+        run: dotnet test QA.AutomationTests.csproj --configuration Debug --filter FullyQualifiedName=QA.AutomationTests.SmokeTests.SmokeTestStaging --logger "trx;LogFileName=test-results.trx"
 
       - name: Upload test results
         if: always()
