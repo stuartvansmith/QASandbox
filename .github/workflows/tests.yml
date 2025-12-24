@@ -36,20 +36,19 @@ jobs:
         run: |
           .\bin\Debug\net8.0\playwright.ps1 install
 
-      - name: Debug - Show what tests are found
+      - name: List tests properly (without running them)
+        shell: pwsh
         run: |
-            echo "All tests:"
-            dotnet test QA.AutomationTests.csproj --list-tests
-            echo "Filtered tests:"
-            dotnet test QA.AutomationTests.csproj --filter "FullyQualifiedName~SmokeTestStaging" --list-tests
-    
+            dotnet vstest .\bin\Debug\net8.0\QA.AutomationTests.dll /ListFullyQualifiedTests
+
       - name: Test (only SmokeTestStaging)
         shell: pwsh
         run: |
-          dotnet test .\QA.AutomationTests.csproj --configuration Debug `
-            --filter "FullyQualifiedName=QA.AutomationTests.SmokeTests.SmokeTestStaging" `
+            dotnet test .\QA.AutomationTests.csproj --configuration Debug `
+            --filter "FullyQualifiedName~SmokeTestStaging" `
             --logger "trx;LogFileName=test-results.trx" `
-            --results-directory TestResults
+            --results-directory TestResults `
+            --verbosity detailed
             
       - name: Upload test results
         if: always()
