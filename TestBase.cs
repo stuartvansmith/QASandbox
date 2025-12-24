@@ -20,10 +20,25 @@ namespace QA.AutomationTests
             {
                 Headless = headless,
             });
-            
-            authPath = Path.Combine(Directory.GetParent(Environment.CurrentDirectory)!.Parent!.Parent!.FullName,
-                                        "SSO",
-                                        "authState.json");
+
+            //authPath = Path.Combine(Directory.GetParent(Environment.CurrentDirectory)!.Parent!.Parent!.FullName,
+            //                            "SSO",
+            //                            "authState.json");
+            // Decide repo root: CI (GitHub) or local
+            var root = Environment.GetEnvironmentVariable("GITHUB_WORKSPACE")
+                       ?? Directory.GetParent(Environment.CurrentDirectory)!.Parent!.Parent!.FullName;
+
+            // Build path to SSO/authState.json
+            var authPath = Path.Combine(root, "SSO", "authState.json");
+
+            // Make sure folder exists
+            Directory.CreateDirectory(Path.GetDirectoryName(authPath)!);
+
+            // Optional but VERY helpful in CI:
+            if (!File.Exists(authPath))
+            {
+                throw new FileNotFoundException($"authState.json not found at {authPath}");
+            }
 
             context = await browser.NewContextAsync(new BrowserNewContextOptions
             {

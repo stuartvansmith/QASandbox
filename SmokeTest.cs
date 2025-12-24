@@ -9,7 +9,8 @@ namespace QA.AutomationTests
     [TestClass]
     public sealed class SmokeTests : TestBase
     {
-        BenefitToBeCreated benefit = new BenefitToBeCreated { BenefitName = "Risk XX Critical illness" };
+        
+        BenefitToBeCreated benefit = new BenefitToBeCreated { BenefitName = "FromGitHub" };
 
         [TestMethod]
         [TestCategory("Smoke")]
