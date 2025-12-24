@@ -35,7 +35,14 @@ jobs:
         shell: pwsh
         run: |
           .\bin\Debug\net8.0\playwright.ps1 install
-     
+
+      - name: Debug - Show what tests are found
+        run: |
+            echo "All tests:"
+            dotnet test QA.AutomationTests.csproj --list-tests
+            echo "Filtered tests:"
+            dotnet test QA.AutomationTests.csproj --filter "FullyQualifiedName~SmokeTestStaging" --list-tests
+    
       - name: Test (only SmokeTestStaging)
         shell: pwsh
         run: |
