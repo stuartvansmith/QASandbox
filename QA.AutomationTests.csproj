@@ -38,4 +38,8 @@
     <Folder Include="AskCuidoResults\" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Include=".github\workflows\tests.yaml" />
+  </ItemGroup>
+
 </Project>
