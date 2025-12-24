@@ -39,16 +39,14 @@ jobs:
       - name: Test (only SmokeTestStaging)
         shell: pwsh
         run: |
-             dotnet test .\QA.AutomationTests.csproj --configuration Debug `
-                --filter "FullyQualifiedName=QA.AutomationTests.SmokeTests.SmokeTestStaging" `
-                --logger "trx;LogFileName=test-results.trx" `
-                --results-directory TestResults
+          dotnet test .\QA.AutomationTests.csproj --configuration Debug `
+            --filter "FullyQualifiedName=QA.AutomationTests.SmokeTests.SmokeTestStaging" `
+            --logger "trx;LogFileName=test-results.trx" `
+            --results-directory TestResults
 
       - name: Upload test results
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: test-results
-          path: |
-            **/TestResults/*.trx
-            **/test-results.trx
+          path: TestResults/**
