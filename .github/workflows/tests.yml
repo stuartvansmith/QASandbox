@@ -36,10 +36,12 @@ jobs:
         run: |
           .\bin\Debug\net8.0\playwright.ps1 install
 
-      - name: List tests properly (without running them)
+      - name: Test (only SmokeTestStaging)
         shell: pwsh
         run: |
-            dotnet vstest .\bin\Debug\net8.0\QA.AutomationTests.dll /ListFullyQualifiedTests
+            dotnet vstest bin\Debug\net8.0\QA.AutomationTests.dll `
+            /Tests:SmokeTestStaging `
+            /Logger:"trx;LogFileName=test-results.trx"
 
       - name: Test (only SmokeTestStaging)
         shell: pwsh
