@@ -13,7 +13,6 @@ namespace QA.AutomationTests
         BenefitToBeCreated benefit = new BenefitToBeCreated { BenefitName = "FromGitHub" };
 
         [TestMethod]
-        [TestCategory("Smoke")]
         public async Task SmokeTestStaging()
         {
 
