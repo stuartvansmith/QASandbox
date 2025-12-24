@@ -12,6 +12,7 @@ namespace QA.AutomationTests
         BenefitToBeCreated benefit = new BenefitToBeCreated { BenefitName = "Risk XX Critical illness" };
 
         [TestMethod]
+        [TestCategory("Smoke")]
         public async Task SmokeTestStaging()
         {
 
