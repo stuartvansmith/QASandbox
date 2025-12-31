@@ -1,4 +1,4 @@
-name: Playwright MSTest
+name: Staging Smoke Test
 on:
     workflow_dispatch:
 jobs:
