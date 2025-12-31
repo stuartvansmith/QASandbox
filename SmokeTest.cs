@@ -19,7 +19,7 @@ namespace QA.AutomationTests
             await page.GotoAsync("https://staging.originbenefits.ai/login");
             await TestHelper.FinishLogin(page);
             await Manager.CreateBenefit(page, benefit);
-           // await Manager.RenewBenefit(page, benefit);
+            await Manager.RenewBenefit(page, benefit);
            
         }
         [TestMethod]
@@ -29,7 +29,7 @@ namespace QA.AutomationTests
             await page.GotoAsync("https://demo.originbenefits.ai/login");
             await TestHelper.FinishLogin(page);
             await Manager.CreateBenefit(page, benefit);
-           // await Manager.RenewBenefit(page, benefit);
+            await Manager.RenewBenefit(page, benefit);
 
         }
         [TestMethod]

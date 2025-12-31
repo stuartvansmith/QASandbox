@@ -175,15 +175,6 @@ namespace QA.AutomationTests
             await page.GetByText("Fees", new() { Exact = true }).ClickAsync();
             await page.GetByText("No fees").ClickAsync();
 
-
-            //var publishBtn = page.GetByRole(AriaRole.Button, new() { Name = "task_alt Publish" }).First;
-
-            //await Expect(publishBtn).ToBeVisibleAsync(new() { Timeout = 5000 });
-            //await Expect(publishBtn).ToBeEnabledAsync(new() { Timeout = 5000 });
-
-            //await publishBtn.ClickAsync(new() { Timeout = 5000 });
-            //await Task.Delay(3000);
-
             var publishBtn = page.GetByRole(AriaRole.Button, new() { Name = "task_alt Publish" });
             await publishBtn.ScrollIntoViewIfNeededAsync();
             await publishBtn.ClickAsync();
@@ -193,9 +184,6 @@ namespace QA.AutomationTests
         {
             await page.GetByRole(AriaRole.Link, new() { Name = "star_border Benefits" }).ClickAsync();
 
-
-
-
             
             var year = page
                     .Locator("i.rzi", new() { HasText = "calendar_month" })
@@ -203,20 +191,15 @@ namespace QA.AutomationTests
                     .Locator(".rz-dropdown");
 
             await year.ClickAsync();
-            await year.PressAsync("ArrowUp");
+            await year.PressAsync("ArrowDown");
             await year.PressAsync("Enter");
             await DeleteYear(page, benefit);
 
                 
             await year.ClickAsync();
-            await year.PressAsync("ArrowDown");
+            await year.PressAsync("ArrowUp");
             await year.PressAsync("Enter");
             await DeleteYear(page, benefit);
-
-
-            
-
-
 
         }
 
@@ -251,13 +234,22 @@ namespace QA.AutomationTests
             await page.GetByRole(AriaRole.Link, new() { Name = "star_border Benefits" }).ClickAsync();
             await page.GetByRole(AriaRole.Link, new() { Name = benefit.BenefitName }).ClickAsync();
             await page.GetByRole(AriaRole.Button, new() { Name = "autorenew Renew" }).ClickAsync();
-            await page.GetByText("Renew on same terms and provider").ClickAsync();
-            await page.GetByRole(AriaRole.Button, new() { Name = "chevron_right Next" }).ClickAsync();
-            await page.GetByRole(AriaRole.Button, new() { Name = "chevron_right Next" }).ClickAsync();
-            await page.GetByRole(AriaRole.Button, new() { Name = "chevron_right Next" }).ClickAsync();
-            await page.GetByRole(AriaRole.Button, new() { Name = "task_alt Complete renenal" }).ClickAsync();
-
+            await page.GetByText("Renew on").First.ClickAsync();
+            
+            try
+            {
+                await page.GetByRole(AriaRole.Button, new() { Name = "chevron_right Renew benefit" }).ClickAsync();
+            }
+            catch (Exception)
+            {
+                await page.GetByRole(AriaRole.Button, new() { Name = "chevron_right Next" }).ClickAsync();
+                await page.GetByRole(AriaRole.Button, new() { Name = "chevron_right Next" }).ClickAsync();
+                await page.GetByRole(AriaRole.Button, new() { Name = "chevron_right Next" }).ClickAsync();
+                await page.GetByText("Complete Renewal").ClickAsync();
+            }
+            await Task.Delay(3000);
             await page.GetByRole(AriaRole.Button, new() { Name = "task_alt Publish" }).ClickAsync();
+            await Task.Delay(3000);
         }
     }
 }
