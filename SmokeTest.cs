@@ -39,7 +39,7 @@ namespace QA.AutomationTests
             await page.GotoAsync("https://web-origin-live.azurewebsites.net/login");
             await TestHelper.FinishLogin(page);
             await Manager.CreateBenefit(page, benefit);
-            //await Manager.RenewBenefit(page, benefit);
+            await Manager.RenewBenefit(page, benefit);
 
         }
     }
