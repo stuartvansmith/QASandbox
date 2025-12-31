@@ -3,6 +3,7 @@ using DocumentFormat.OpenXml.Spreadsheet;
 using Microsoft.Playwright;
 using System.Text.RegularExpressions;
 using System.Threading;
+using static Microsoft.Playwright.Assertions;
 
 namespace QA.AutomationTests
 {
@@ -129,27 +130,26 @@ namespace QA.AutomationTests
 
             await page.GetByRole(AriaRole.Button, new() { Name = "> Next" }).ClickAsync();
 
-            
-            //var filePath = Path.Combine(Directory.GetParent(Environment.CurrentDirectory)!.Parent!.Parent!.FullName,
-            //                            "Documents",
-            //                            "Critical illness policy.pdf");
 
-            //var fileInput = page.Locator("input[type='file']");
+            var filePath = Path.Combine(Directory.GetParent(Environment.CurrentDirectory)!.Parent!.Parent!.FullName,
+                                        "Documents",
+                                        "Critical illness policy.pdf");
 
-
-            //await fileInput.WaitForAsync();
+            var fileInput = page.Locator("input[type='file']");
 
 
-            //await fileInput.SetInputFilesAsync(filePath);
+            await fileInput.WaitForAsync();
 
 
-            //await page.GetByText("Validate document import", new() { Exact = true })
-            //          .WaitForAsync(new() { State = WaitForSelectorState.Visible, Timeout = 300_000 });
+            await fileInput.SetInputFilesAsync(filePath);
+
+
+            await page.GetByText("Validate document import", new() { Exact = true })
+                      .WaitForAsync(new() { State = WaitForSelectorState.Visible, Timeout = 300_000 });
 
             await page.GetByRole(AriaRole.Button, new() { Name = "Save", Exact = true }).ClickAsync();
             await page.GetByRole(AriaRole.Button, new() { Name = "Save without adding a note" }).ClickAsync();
 
-            return;
 
             await page.Locator("input[name=\"End Date\"]").ClickAsync();
             await page.Locator("[id=\"Start Date\"]").DblClickAsync();
@@ -175,7 +175,19 @@ namespace QA.AutomationTests
             await page.GetByText("Fees", new() { Exact = true }).ClickAsync();
             await page.GetByText("No fees").ClickAsync();
 
-            await page.GetByRole(AriaRole.Button, new() { Name = "task_alt Publish" }).ClickAsync();
+
+            //var publishBtn = page.GetByRole(AriaRole.Button, new() { Name = "task_alt Publish" }).First;
+
+            //await Expect(publishBtn).ToBeVisibleAsync(new() { Timeout = 5000 });
+            //await Expect(publishBtn).ToBeEnabledAsync(new() { Timeout = 5000 });
+
+            //await publishBtn.ClickAsync(new() { Timeout = 5000 });
+            //await Task.Delay(3000);
+
+            var publishBtn = page.GetByRole(AriaRole.Button, new() { Name = "task_alt Publish" });
+            await publishBtn.ScrollIntoViewIfNeededAsync();
+            await publishBtn.ClickAsync();
+            await Task.Delay(3000);
         }
         internal static async Task DeleteBenefit(IPage page, BenefitToBeCreated benefit)
         {
