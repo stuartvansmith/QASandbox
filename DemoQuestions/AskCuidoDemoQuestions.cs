@@ -1,7 +1,7 @@
 using ClosedXML.Excel;
 using Microsoft.Playwright;
 
-namespace QA.AutomationTests;
+namespace QA.AutomationTests.DemoQuestions;
 
 public class QAPair
 {
@@ -23,7 +23,7 @@ public class AskCuidoDemoQuestions : TestBase
 
         var results = new List<QAPair>();
         int counter = 1;
-        string lastCountry = String.Empty;
+        string lastCountry = string.Empty;
 
         async Task AskAndRecord(string question, string filterOnBen = null, string country = null)
         {

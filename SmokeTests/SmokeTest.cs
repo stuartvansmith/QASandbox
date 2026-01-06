@@ -2,7 +2,7 @@
 using Microsoft.Playwright;
 
 
-namespace QA.AutomationTests
+namespace QA.AutomationTests.SmokeTests
 {
 
 
