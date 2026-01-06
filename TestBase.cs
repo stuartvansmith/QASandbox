@@ -21,10 +21,7 @@ namespace QA.AutomationTests
                 Headless = headless,
             });
 
-            //authPath = Path.Combine(Directory.GetParent(Environment.CurrentDirectory)!.Parent!.Parent!.FullName,
-            //                            "SSO",
-            //                            "authState.json");
-            // Decide repo root: CI (GitHub) or local
+            
             var root = Environment.GetEnvironmentVariable("GITHUB_WORKSPACE")
                        ?? Directory.GetParent(Environment.CurrentDirectory)!.Parent!.Parent!.FullName;
 

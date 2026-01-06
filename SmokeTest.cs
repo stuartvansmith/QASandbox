@@ -7,6 +7,7 @@ namespace QA.AutomationTests
 
 
     [TestClass]
+    [DoNotParallelize]
     public sealed class SmokeTests : TestBase
     {
         
