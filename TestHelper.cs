@@ -13,7 +13,7 @@ namespace QA.AutomationTests
 {
     public static class TestHelper
     {
-        public static async Task FinishLogin(IPage page)
+        public static async Task FinishLogin(IPage page, string period)
         {
             await page.GetByRole(AriaRole.Button, new() { Name = "button Microsoft" }).ClickAsync();
             
@@ -23,7 +23,7 @@ namespace QA.AutomationTests
             await TestHelper.SelectDropdownOptionByAriaAsync(
                 page,
                 "Origin.Common.Scheme.BenefitTermPeriod",
-                "2025"
+                period
             );
             await page.GetByRole(AriaRole.Button, new() { Name = "navigate_next Next" }).ClickAsync();
         }

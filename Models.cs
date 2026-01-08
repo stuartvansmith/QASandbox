@@ -9,5 +9,6 @@ namespace QA.AutomationTests
     public class BenefitToBeCreated()
     {
         public string BenefitName { get; set; }
+        public int Period { get; set; }
     }
 }

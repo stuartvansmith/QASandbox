@@ -11,14 +11,14 @@ namespace QA.AutomationTests.SmokeTests
     public sealed class SmokeTests : TestBase
     {
         
-        BenefitToBeCreated benefit = new BenefitToBeCreated { BenefitName = "FromGitHub" };
+        BenefitToBeCreated benefit = new BenefitToBeCreated { BenefitName = "FromGitHubXX", Period = 2026 };
 
         [TestMethod]
         public async Task SmokeTestStaging()
         {
 
             await page.GotoAsync("https://staging.originbenefits.ai/login");
-            await TestHelper.FinishLogin(page);
+            await TestHelper.FinishLogin(page, benefit.Period.ToString());
             await Manager.CreateBenefit(page, benefit);
             await Manager.RenewBenefit(page, benefit);
            
@@ -28,7 +28,7 @@ namespace QA.AutomationTests.SmokeTests
         {
 
             await page.GotoAsync("https://demo.originbenefits.ai/login");
-            await TestHelper.FinishLogin(page);
+            await TestHelper.FinishLogin(page, benefit.Period.ToString());
             await Manager.CreateBenefit(page, benefit);
             await Manager.RenewBenefit(page, benefit);
 
@@ -38,7 +38,7 @@ namespace QA.AutomationTests.SmokeTests
         {
 
             await page.GotoAsync("https://web-origin-live.azurewebsites.net/login");
-            await TestHelper.FinishLogin(page);
+            await TestHelper.FinishLogin(page, benefit.Period.ToString());
             await Manager.CreateBenefit(page, benefit);
             await Manager.RenewBenefit(page, benefit);
 

@@ -126,7 +126,7 @@ namespace QA.AutomationTests
 
 
             await page.Locator("input[name='Benefit term period']").EvaluateAsync("el => el.parentElement.click()");
-            await page.GetByRole(AriaRole.Option, new() { Name = "2025" }).ClickAsync();
+            await page.GetByRole(AriaRole.Option, new() { Name = benefit.Period.ToString() }).ClickAsync();
 
             await page.GetByRole(AriaRole.Button, new() { Name = "> Next" }).ClickAsync();
 
@@ -153,11 +153,11 @@ namespace QA.AutomationTests
 
             await page.Locator("input[name=\"End Date\"]").ClickAsync();
             await page.Locator("[id=\"Start Date\"]").DblClickAsync();
-            await page.Locator("[id=\"Start Date\"]").FillAsync("01/01/2025");
+            await page.Locator("[id=\"Start Date\"]").FillAsync($"01/01/{benefit.Period}");
             await page.Locator("[id=\"Start Date\"]").PressAsync("Tab");
-            await page.Locator("input[name=\"End Date\"]").FillAsync("31/12/2025");
+            await page.Locator("input[name=\"End Date\"]").FillAsync($"31/12/{benefit.Period}");
             await page.Locator("input[name=\"End Date\"]").PressAsync("Tab");
-            await page.Locator("[id=\"Renewal Date\"]").FillAsync("01/01/2026");
+            await page.Locator("[id=\"Renewal Date\"]").FillAsync($"01/01/{benefit.Period+1}");
             await page.Locator("[id=\"Renewal Date\"]").PressAsync("Tab");
 
             await page.Locator("input[name='Provider']").EvaluateAsync("el => el.parentElement.click()");
@@ -207,23 +207,31 @@ namespace QA.AutomationTests
         {
             await page.GetByText("Published benefits", new() { Exact = true }).ClickAsync();
             try
-            {
-                await page.GetByRole(AriaRole.Button, new() { Name = "more_vert" }).ClickAsync(new() { Timeout = 2000 });
+            {                
+                var row = page.Locator("tr.rz-data-row").Filter(new() { HasText = benefit.BenefitName }).First;
+                await row.WaitForAsync(new() { State = WaitForSelectorState.Visible });
+                await row.Locator(".more-actions-btn").ClickAsync();
                 await page.Locator("span").Filter(new() { HasTextRegex = new Regex("^Archive$") }).ClickAsync(new() { Timeout = 2000 });
             }
             catch (Exception) { }
             await page.GetByText("Draft benefits", new() { Exact = true }).ClickAsync();
             try
             {
-                await page.GetByRole(AriaRole.Button, new() { Name = "more_vert" }).ClickAsync(new() { Timeout = 2000 });
+                
+                var row = page.Locator("tr.rz-data-row").Filter(new() { HasText = benefit.BenefitName }).First;
+                await row.WaitForAsync(new() { State = WaitForSelectorState.Visible });
+                await row.Locator(".more-actions-btn").ClickAsync();
                 await page.Locator("span").Filter(new() { HasTextRegex = new Regex("^Archive$") }).ClickAsync(new() { Timeout = 2000 });
             }
             catch (Exception) { }
             await page.GetByText("Archive", new() { Exact = true }).ClickAsync();
             try
             {
-                await page.GetByRole(AriaRole.Button, new() { Name = "more_vert" }).ClickAsync(new() { Timeout = 2000 });
-                await page.GetByText("Delete", new() { Exact = true }).ClickAsync(new() { Timeout = 2000 });
+                
+                var row = page.Locator("tr.rz-data-row").Filter(new() { HasText = benefit.BenefitName }).First;
+                await row.WaitForAsync(new() { State = WaitForSelectorState.Visible });
+                await row.Locator(".more-actions-btn").ClickAsync();
+                await page.Locator("span").Filter(new() { HasTextRegex = new Regex("^Delete$") }).ClickAsync(new() { Timeout = 2000 });
             }
             catch (Exception) { }
         }

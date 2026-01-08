@@ -12,7 +12,7 @@ namespace QA.AutomationTests.RegressionTests
         public async Task InsightsStaging1()
         {
             await page.GotoAsync("https://staging.originbenefits.ai/login");
-            await TestHelper.FinishLogin(page);
+            await TestHelper.FinishLogin(page, "2026");
             await page.GetByRole(AriaRole.Link, new() { Name = "lightbulb_circle Insights" }).ClickAsync();
             
             await page.GetByText("Run Report").First.ClickAsync();
