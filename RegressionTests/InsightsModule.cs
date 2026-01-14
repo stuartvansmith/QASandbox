@@ -9,7 +9,7 @@ namespace QA.AutomationTests.RegressionTests
     public class InsightsModule : TestBase
     {
         [TestMethod]
-        public async Task InsightsStaging1()
+        public async Task InsightsStaging()
         {
             await page.GotoAsync("https://staging.originbenefits.ai/login");
             await TestHelper.FinishLogin(page, "2026");
@@ -35,7 +35,7 @@ namespace QA.AutomationTests.RegressionTests
             //    await exportBtn.ClickAsync();
             //});
    
-            await page.PauseAsync();
+            //await page.PauseAsync();
             return;
 
             await page.Locator("#RYc3xSz0vU > .rz-dropdown-label").ClickAsync();
