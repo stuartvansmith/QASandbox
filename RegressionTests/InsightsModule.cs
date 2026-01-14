@@ -58,5 +58,7 @@ namespace QA.AutomationTests.RegressionTests
             });
             await page.PauseAsync();   
         }
+        [TestMethod]
+        public async Task deliberateFailToTestReport() { }
     }
 }
