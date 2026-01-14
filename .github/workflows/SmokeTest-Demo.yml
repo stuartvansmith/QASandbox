@@ -1,4 +1,4 @@
-name: Staging Smoke Test
+name: Smoke Test Demo
 on:
     workflow_dispatch:
 jobs:
@@ -31,7 +31,7 @@ jobs:
         shell: pwsh
         run: |
           dotnet vstest bin\Debug\net8.0\QA.AutomationTests.dll `
-            /Tests:SmokeTestStaging `
+            /Tests:SmokeTestDemo `
             /Logger:"trx;LogFileName=test-results.trx"
             
       - name: Upload test results

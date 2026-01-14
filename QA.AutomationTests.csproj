@@ -39,9 +39,10 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Include=".github\workflows\LiveSmokeTest.yml" />
-    <None Include=".github\workflows\DemoSmokeTest.yml" />
-    <None Include=".github\workflows\StagingSmokeTest.yml" />
+    <None Include=".github\workflows\Regression-Staging-Insights.yml" />
+    <None Include=".github\workflows\SmokeTest-Live.yml" />
+    <None Include=".github\workflows\SmokeTest-Demo.yml" />
+    <None Include=".github\workflows\SmokeTest-Staging.yml" />
   </ItemGroup>
 
 </Project>

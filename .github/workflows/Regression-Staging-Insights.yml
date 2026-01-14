@@ -1,4 +1,4 @@
-name: Live Smoke Test
+name: Regression Insights Module Staging
 on:
     workflow_dispatch:
 jobs:
@@ -31,7 +31,7 @@ jobs:
         shell: pwsh
         run: |
           dotnet vstest bin\Debug\net8.0\QA.AutomationTests.dll `
-            /Tests:SmokeTestLive `
+            /Tests:InsightsStaging `
             /Logger:"trx;LogFileName=test-results.trx"
             
       - name: Upload test results
