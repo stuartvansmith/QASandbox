@@ -1,4 +1,4 @@
-name: Regression Insights Module Staging
+name: Regression Staging Insights
 on:
     workflow_dispatch:
 jobs:

@@ -27,7 +27,7 @@ jobs:
         run: |
           .\bin\Debug\net8.0\playwright.ps1 install
      
-      - name: Test (only SmokeTestStaging)
+      - name: Test 
         shell: pwsh
         run: |
           dotnet vstest bin\Debug\net8.0\QA.AutomationTests.dll `
