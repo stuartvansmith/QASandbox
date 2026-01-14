@@ -27,13 +27,13 @@ jobs:
         run: |
           .\bin\Debug\net8.0\playwright.ps1 install
      
-      - name: Test (only SmokeTestStaging)
+      - name: Test (only insights test Class)
         shell: pwsh
         run: |
           dotnet vstest bin\Debug\net8.0\QA.AutomationTests.dll `
-            /Tests:InsightsStaging `
+            /TestCaseFilter:"FullyQualifiedName~QA.AutomationTests.InsightsModule" `
             /Logger:"trx;LogFileName=test-results.trx"
-            
+      
       - name: Upload test results
         if: always()
         uses: actions/upload-artifact@v4
