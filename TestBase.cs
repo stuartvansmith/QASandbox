@@ -42,7 +42,8 @@ namespace QA.AutomationTests
                 Locale = "en-GB",
                 TimezoneId = "Europe/London",
                 Permissions = new[] { "geolocation" },
-                StorageStatePath = authPath
+                StorageStatePath = authPath,
+                AcceptDownloads = true
                 //RecordVideoDir = "test-videos",
                 //RecordVideoSize = new() { Width = 1280, Height = 720 } 
             });

@@ -17,14 +17,24 @@ namespace QA.AutomationTests.RegressionTests
             
             await page.GetByText("Run Report").First.ClickAsync();
 
-            var exportBtn = page.GetByText("Export Report").First;
-            await exportBtn.WaitForAsync();
-            await exportBtn.ClickAsync();
+            // Ensure context was created with AcceptDownloads = true
+            var filePath = await TestHelper.DownloadAndVerifyAsync(
+                page,
+                async () => await page.GetByText("Export Report").First.ClickAsync(),
+                downloadsDir: "test-downloads",
+                timeoutMs: 30000
+            );
+
+            // Now you can parse it or upload it as an artifact
+            Console.WriteLine($"Downloaded file: {filePath}");
 
             //var download = await page.RunAndWaitForDownloadAsync(async () =>
             //{
-            //    await page.GetByRole(AriaRole.Button, new() { Name = "export_notes Export Report" }).ClickAsync();
+            //    var exportBtn = page.GetByText("Export Report").First;
+            //    await exportBtn.WaitForAsync();
+            //    await exportBtn.ClickAsync();
             //});
+   
             await page.PauseAsync();
             return;
 

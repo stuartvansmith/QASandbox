@@ -115,7 +115,7 @@ public class AskCuidoDemoQuestions : TestBase
         await TestHelper.SelectDropdownOptionByAriaAsync(
             page,
             "Origin.Common.Scheme.BenefitTermPeriod",
-            "2025"
+            "2026"
         );
         await page.GetByRole(AriaRole.Button, new() { Name = "navigate_next Next" }).ClickAsync();
         

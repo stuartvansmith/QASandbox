@@ -13,6 +13,33 @@ namespace QA.AutomationTests
 {
     public static class TestHelper
     {
+        public static async Task<string> DownloadAndVerifyAsync(
+            IPage page,
+            Func<Task> triggerDownload,
+            string downloadsDir = "downloads",
+            int timeoutMs = 5000)
+        {
+            // Capture the download
+            var download = await page.RunAndWaitForDownloadAsync(triggerDownload, new()
+            {
+                Timeout = timeoutMs
+            });
+
+            // Save to a deterministic folder
+            var fullDir = Path.Combine(Directory.GetCurrentDirectory(), downloadsDir);
+            Directory.CreateDirectory(fullDir);
+
+            var filePath = Path.Combine(fullDir, download.SuggestedFilename);
+            await download.SaveAsAsync(filePath);
+
+            // Verify
+            Assert.IsTrue(File.Exists(filePath), $"Download file does not exist: {filePath}");
+
+            var info = new FileInfo(filePath);
+            Assert.IsTrue(info.Length > 0, $"Downloaded file is empty: {filePath}");
+
+            return filePath;
+        }
         public static async Task FinishLogin(IPage page, string period)
         {
             await page.GetByRole(AriaRole.Button, new() { Name = "button Microsoft" }).ClickAsync();
