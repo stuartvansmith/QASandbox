@@ -31,7 +31,7 @@ jobs:
         shell: pwsh
         run: |
           dotnet vstest bin\Debug\net8.0\QA.AutomationTests.dll `
-            /TestCaseFilter:"FullyQualifiedName~QA.AutomationTests.InsightsModule" `
+            /TestCaseFilter:"FullyQualifiedName~QA.AutomationTests.RegressionTests.InsightsModule" `
             /Logger:"trx;LogFileName=test-results.trx"
       
       - name: Upload test results
