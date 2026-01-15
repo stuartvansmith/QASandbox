@@ -9,7 +9,7 @@ public class ResetSSO : TestBase
     public async Task StoreSSO()
     {
 
-        await context.StorageStateAsync(new()
+        await browserContext.StorageStateAsync(new()
         {
             Path = authPath  
         });

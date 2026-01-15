@@ -15,33 +15,21 @@ namespace QA.AutomationTests.SmokeTests
 
         [TestMethod]
         public async Task SmokeTestStaging()
-        {
-
-            await page.GotoAsync("https://staging.originbenefits.ai/login");
-            await TestHelper.FinishLogin(page, benefit.Period.ToString());
+        {            
             await Manager.CreateBenefit(page, benefit);
             await Manager.RenewBenefit(page, benefit);
-           
         }
-        [TestMethod]
-        public async Task SmokeTestDemo()
-        {
-
-            await page.GotoAsync("https://demo.originbenefits.ai/login");
-            await TestHelper.FinishLogin(page, benefit.Period.ToString());
-            await Manager.CreateBenefit(page, benefit);
-            await Manager.RenewBenefit(page, benefit);
-
-        }
-        [TestMethod]
-        public async Task SmokeTestLive()
-        {
-
-            await page.GotoAsync("https://web-origin-live.azurewebsites.net/login");
-            await TestHelper.FinishLogin(page, benefit.Period.ToString());
-            await Manager.CreateBenefit(page, benefit);
-            await Manager.RenewBenefit(page, benefit);
-
-        }
+        //[TestMethod]
+        //public async Task SmokeTestDemo()
+        //{
+        //    await Manager.CreateBenefit(page, benefit);
+        //    await Manager.RenewBenefit(page, benefit);
+        //}
+        //[TestMethod]
+        //public async Task SmokeTestLive()
+        //{
+        //    await Manager.CreateBenefit(page, benefit);
+        //    await Manager.RenewBenefit(page, benefit);
+        //}
     }
 }

@@ -1,17 +1,28 @@
 ﻿using Microsoft.Playwright;
+using System.Runtime.InteropServices.Marshalling;
 
 namespace QA.AutomationTests
 {
+    [TestClass]
     public class TestBase
     {
-        protected IBrowser browser;
-        protected IPage page;
-        protected IPlaywright playwright;
-        protected IBrowserContext context;
-        protected string? authPath;
+        protected static IBrowser browser;
+        protected static IPage page;
+        protected static IPlaywright playwright;
+        protected static IBrowserContext browserContext;
+
+        protected static string? authPath;
+        protected static string BaseUrl => Environment.GetEnvironmentVariable("TEST_BASE_URL")
+                                       ?? "https://staging.originbenefits.ai"; // Default fallback
 
         [TestInitialize]
-        public async Task Setup()
+        public virtual async Task TestSetup()
+        {
+
+        }
+
+        [ClassInitialize(InheritanceBehavior.BeforeEachDerivedClass)]
+        public static async Task Setup(TestContext context)
         {
 
             playwright = await Playwright.CreateAsync();
@@ -37,31 +48,32 @@ namespace QA.AutomationTests
                 throw new FileNotFoundException($"authState.json not found at {authPath}");
             }
 
-            context = await browser.NewContextAsync(new BrowserNewContextOptions
+            browserContext = await browser.NewContextAsync(new BrowserNewContextOptions
             {
                 Locale = "en-GB",
                 TimezoneId = "Europe/London",
                 Permissions = new[] { "geolocation" },
                 StorageStatePath = authPath,
-                AcceptDownloads = true
-                //RecordVideoDir = "test-videos",
-                //RecordVideoSize = new() { Width = 1280, Height = 720 } 
+                AcceptDownloads = true,
+               // RecordVideoDir = "test-videos",
+               // RecordVideoSize = new() { Width = 1280, Height = 720 } 
             });
-            page = await context.NewPageAsync();
 
-            await Navigate();
-        }
-
-        public virtual async Task Navigate()
-        {
-            
+            page = await browserContext.NewPageAsync();
+            await page.GotoAsync($"{BaseUrl}/login");
+            await TestHelper.FinishLogin(page, "2026");
         }
 
         [TestCleanup]
-        public async Task Teardown()
+        public virtual async Task TestCleanUp()
+        { 
+        }
+
+        [ClassCleanup(InheritanceBehavior.BeforeEachDerivedClass)]
+        public static async Task Teardown()
         {
-            if (context != null)
-                await context.CloseAsync();  
+            if (browserContext != null)
+                await browserContext.CloseAsync();  
 
             if (browser != null)
                 await browser.CloseAsync();

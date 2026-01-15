@@ -31,8 +31,10 @@ jobs:
         shell: pwsh
         run: |
           dotnet vstest bin\Debug\net8.0\QA.AutomationTests.dll `
-            /Tests:SmokeTestDemo `
+            /TestCaseFilter:"FullyQualifiedName~QA.AutomationTests.SmokeTests.SmokeTests" `
             /Logger:"trx;LogFileName=test-results.trx"
+        env:
+          TEST_BASE_URL: "https://demo.originbenefits.ai"
             
       - name: Upload test results
         if: always()

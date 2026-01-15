@@ -106,7 +106,7 @@ public class AskCuidoDemoQuestions : TestBase
     }
 
 
-    public override async Task Navigate()
+    public override async Task TestSetup()
     {
         await page.GotoAsync("https://demo.originbenefits.ai/login");
         await page.GetByRole(AriaRole.Button, new() { Name = "button Microsoft" }).ClickAsync();

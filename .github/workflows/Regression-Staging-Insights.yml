@@ -33,7 +33,9 @@ jobs:
           dotnet vstest bin\Debug\net8.0\QA.AutomationTests.dll `
             /TestCaseFilter:"FullyQualifiedName~QA.AutomationTests.RegressionTests.InsightsModule" `
             /Logger:"trx;LogFileName=test-results.trx"
-      
+        env:
+          TEST_BASE_URL: "https://staging.originbenefits.ai"
+  
       - name: Upload test results
         if: always()
         uses: actions/upload-artifact@v4

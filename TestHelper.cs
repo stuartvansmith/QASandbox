@@ -8,31 +8,32 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
+using static Microsoft.Playwright.Assertions;
 
 namespace QA.AutomationTests
 {
     public static class TestHelper
     {
+
         public static async Task<string> DownloadAndVerifyAsync(
             IPage page,
             Func<Task> triggerDownload,
             string downloadsDir = "downloads",
             int timeoutMs = 5000)
         {
-            // Capture the download
+         
             var download = await page.RunAndWaitForDownloadAsync(triggerDownload, new()
             {
                 Timeout = timeoutMs
             });
 
-            // Save to a deterministic folder
             var fullDir = Path.Combine(Directory.GetCurrentDirectory(), downloadsDir);
             Directory.CreateDirectory(fullDir);
 
             var filePath = Path.Combine(fullDir, download.SuggestedFilename);
             await download.SaveAsAsync(filePath);
 
-            // Verify
+         
             Assert.IsTrue(File.Exists(filePath), $"Download file does not exist: {filePath}");
 
             var info = new FileInfo(filePath);
@@ -93,7 +94,7 @@ namespace QA.AutomationTests
             await page.GetByRole(AriaRole.Link, new() { Name = "image Ask Cuido" }).ClickAsync();
             
             var editBtn = page.GetByRole(AriaRole.Button, new() { Name = "edit_square" });
-            //await editBtn.WaitForAsync(new() { State = WaitForSelectorState.Visible });
+
             await editBtn.ClickAsync();
             
             
@@ -140,11 +141,9 @@ namespace QA.AutomationTests
 
         internal static async Task SwitchCountry(IPage page, string countryName, int timeoutMs = 5000)
         {
-            // 1. Open the first country dropdown
             var regionPicker = page.Locator("div.rz-dropdown.rz-clear").First;
             await regionPicker.ClickAsync();
 
-            // 2. Select country inside the listbox
             var listbox = page.GetByRole(AriaRole.Listbox).First;
             await listbox.WaitForAsync(new()
             {
@@ -159,50 +158,13 @@ namespace QA.AutomationTests
                 Timeout = timeoutMs
             });
 
-            // 3. Wait for the listbox to disappear (dropdown closed)
             await listbox.WaitForAsync(new()
             {
                 State = WaitForSelectorState.Hidden,
                 Timeout = timeoutMs
             });
 
-            //// 4. Wait for the selected country label in the dropdown to show the new country
-            //await regionPicker.GetByText(countryName, new() { Exact = true }).WaitForAsync(new()
-            //{
-            //    State = WaitForSelectorState.Visible,
-            //    Timeout = timeoutMs
-            //});
-
-            // 5. OPTIONAL: wait for any loading overlay to go away
-            // e.g. if you have a spinner like ".loading-overlay"
-            // await page.Locator(".loading-overlay").WaitForAsync(new() { State = WaitForSelectorState.Hidden, Timeout = timeoutMs });
         }
-
-
-        //internal static async Task SwitchCountry(IPage page, string countryName, int timeoutMs = 2000)
-        //{
-
-        //    var regionPicker = page.Locator("div.rz-dropdown.rz-clear").First;
-        //    await regionPicker.ClickAsync();
-
-        //    var listbox = page.GetByRole(AriaRole.Listbox).First;
-        //    await listbox.WaitForAsync(new()
-        //    {
-        //        State = WaitForSelectorState.Visible,
-        //        Timeout = timeoutMs
-        //    });
-
-
-        //    var option = listbox
-        //        .GetByText(countryName, new() { Exact = true })
-        //        .First;  
-
-        //    await option.ClickAsync(new()
-        //    {
-        //        Timeout = timeoutMs
-        //    });
-
-        //}
 
         internal static async Task<string> WaitForCuidoAnswer(IPage page)
         {
