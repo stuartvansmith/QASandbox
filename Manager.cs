@@ -146,9 +146,16 @@ namespace QA.AutomationTests
 
             await page.GetByText("Validate document import", new() { Exact = true })
                       .WaitForAsync(new() { State = WaitForSelectorState.Visible, Timeout = 300_000 });
-
             await page.GetByRole(AriaRole.Button, new() { Name = "Save", Exact = true }).ClickAsync();
             await page.GetByRole(AriaRole.Button, new() { Name = "Save without adding a note" }).ClickAsync();
+
+            //await page.GetByRole(AriaRole.Group, new() { Name = "Overview" }).Locator("div").Nth(1).ClickAsync();
+            //await page.GetByRole(AriaRole.Tabpanel, new() { Name = "Collapse" }).Locator("iframe").ContentFrame.Locator("html").ClickAsync();
+            //await page.GetByRole(AriaRole.Tabpanel, new() { Name = "Collapse" }).Locator("iframe").ContentFrame.GetByLabel("Rich Text Area").FillAsync("adsgf");
+            //await page.GetByLabel("keyboard_arrow_downinfo").Locator("div").Filter(new() { HasText = "share_locationCountry benefitdynamic_feedMulti-country benefitpublicGlobal" }).Nth(3).ClickAsync();
+
+
+   
 
 
             await page.Locator("input[name=\"End Date\"]").ClickAsync();
@@ -209,9 +216,9 @@ namespace QA.AutomationTests
             try
             {                
                 var row = page.Locator("tr.rz-data-row").Filter(new() { HasText = benefit.BenefitName }).First;
-                await row.WaitForAsync(new() { State = WaitForSelectorState.Visible });
+                await row.WaitForAsync(new() { State = WaitForSelectorState.Visible, Timeout = 1000 });
                 await row.Locator(".more-actions-btn").ClickAsync();
-                await page.Locator("span").Filter(new() { HasTextRegex = new Regex("^Archive$") }).ClickAsync(new() { Timeout = 2000 });
+                await page.Locator("span").Filter(new() { HasTextRegex = new Regex("^Archive$") }).ClickAsync(new() { Timeout = 1000 });
             }
             catch (Exception) { }
             await page.GetByText("Draft benefits", new() { Exact = true }).ClickAsync();
@@ -219,9 +226,9 @@ namespace QA.AutomationTests
             {
                 
                 var row = page.Locator("tr.rz-data-row").Filter(new() { HasText = benefit.BenefitName }).First;
-                await row.WaitForAsync(new() { State = WaitForSelectorState.Visible });
+                await row.WaitForAsync(new() { State = WaitForSelectorState.Visible, Timeout = 2000 });
                 await row.Locator(".more-actions-btn").ClickAsync();
-                await page.Locator("span").Filter(new() { HasTextRegex = new Regex("^Archive$") }).ClickAsync(new() { Timeout = 2000 });
+                await page.Locator("span").Filter(new() { HasTextRegex = new Regex("^Archive$") }).ClickAsync(new() { Timeout = 1000 });
             }
             catch (Exception) { }
             await page.GetByText("Archive", new() { Exact = true }).ClickAsync();
@@ -229,24 +236,31 @@ namespace QA.AutomationTests
             {
                 
                 var row = page.Locator("tr.rz-data-row").Filter(new() { HasText = benefit.BenefitName }).First;
-                await row.WaitForAsync(new() { State = WaitForSelectorState.Visible });
+                await row.WaitForAsync(new() { State = WaitForSelectorState.Visible, Timeout = 2000 });
                 await row.Locator(".more-actions-btn").ClickAsync();
-                await page.Locator("span").Filter(new() { HasTextRegex = new Regex("^Delete$") }).ClickAsync(new() { Timeout = 2000 });
+                await page.Locator("span").Filter(new() { HasTextRegex = new Regex("^Delete$") }).ClickAsync(new() { Timeout = 1000 });
             }
             catch (Exception) { }
         }
 
         internal static async Task RenewBenefit(IPage page, BenefitToBeCreated benefit)
         {
-            
+           // await Task.Delay(10000);
             await page.GetByRole(AriaRole.Link, new() { Name = "star_border Benefits" }).ClickAsync();
             await page.GetByRole(AriaRole.Link, new() { Name = benefit.BenefitName }).ClickAsync();
-            await page.GetByRole(AriaRole.Button, new() { Name = "autorenew Renew" }).ClickAsync();
+            var button = page.GetByRole(AriaRole.Button, new() { Name = "Renew" });
+            await button.WaitForAsync(new() { State = WaitForSelectorState.Visible });
+            await Task.Delay(500); // Give animations time to complete
+            await button.ClickAsync(new() { Force = true, Timeout = 10000 });
+            
             await page.GetByText("Renew on").First.ClickAsync();
             
             try
             {
-                await page.GetByRole(AriaRole.Button, new() { Name = "chevron_right Renew benefit" }).ClickAsync();
+                await page.GetByRole(AriaRole.Button, new() { Name = "chevron_right Renew benefit" }).ClickAsync(new()
+                {
+                    Timeout = 10000  // 10 seconds in milliseconds
+                });
             }
             catch (Exception)
             {
