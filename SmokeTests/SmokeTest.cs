@@ -19,17 +19,10 @@ namespace QA.AutomationTests.SmokeTests
             await Manager.CreateBenefit(page, benefit);
             await Manager.RenewBenefit(page, benefit);
         }
-        //[TestMethod]
-        //public async Task SmokeTestDemo()
-        //{
-        //    await Manager.CreateBenefit(page, benefit);
-        //    await Manager.RenewBenefit(page, benefit);
-        //}
-        //[TestMethod]
-        //public async Task SmokeTestLive()
-        //{
-        //    await Manager.CreateBenefit(page, benefit);
-        //    await Manager.RenewBenefit(page, benefit);
-        //}
+        [TestMethod]
+        public async Task SmokeTestStagingIntendedFail()
+        {
+            Assert.IsTrue(false);
+        }
     }
 }

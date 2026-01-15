@@ -12,7 +12,6 @@ namespace QA.AutomationTests.RegressionTests
         [TestMethod]
         public async Task BenefitSummaryReport()
         {
-             
             await page.GetByText("Run Report").Nth(0).ClickAsync();
 
             var filePath = await TestHelper.DownloadAndVerifyAsync(
@@ -28,17 +27,17 @@ namespace QA.AutomationTests.RegressionTests
         [TestMethod]
         public async Task BenefitDetailReport()
         {
-
             await page.GetByText("Run Report").Nth(1).ClickAsync();
-            
+
             await Task.Delay(1000);
             await page.GetByText("Benefit family", new() { Exact = true }).ClickAsync();
+
             await Task.Delay(1000);
             await page.GetByText("Risk").ClickAsync();
 
-
             await page.GetByText("Benefit type", new() { Exact = true }).ClickAsync();
             await Task.Delay(1000);
+
             await page.GetByText("Critical illness").ClickAsync();
             await Task.Delay(1000);
 
@@ -61,16 +60,10 @@ namespace QA.AutomationTests.RegressionTests
             Console.WriteLine($"Downloaded file: {filePath}");
         }
 
-        //[TestCleanup]
-        //public override async Task TestCleanUp()
-        //{
-        //    await page.GetByRole(AriaRole.Link, new() { Name = "lightbulb_circle Insights" }).ClickAsync();
-        //}
 
         [TestInitialize]
         public override async Task TestSetup() 
         {
-
             await page.GetByRole(AriaRole.Link, new() { Name = "lightbulb_circle Insights" }).ClickAsync();
         }
     }
