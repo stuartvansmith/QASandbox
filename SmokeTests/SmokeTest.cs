@@ -11,10 +11,10 @@ namespace QA.AutomationTests.SmokeTests
     public sealed class SmokeTests : TestBase
     {
         
-        BenefitToBeCreated benefit = new BenefitToBeCreated { BenefitName = "GitHubSmokeTest", Period = 2026 };
+        BenefitToBeCreated benefit = new BenefitToBeCreated { BenefitName = "stagingGitHubSmokeTest", Period = 2026 };
 
         [TestMethod]
-        public async Task SmokeTestStaging()
+        public async Task SmokeTest()
         {            
             await Manager.CreateBenefit(page, benefit);
             await Manager.RenewBenefit(page, benefit);
