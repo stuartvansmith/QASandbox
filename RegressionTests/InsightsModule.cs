@@ -12,6 +12,9 @@ namespace QA.AutomationTests.RegressionTests
         [TestMethod]
         public async Task BenefitSummaryReport()
         {
+            Console.WriteLine("Description: This test opens the Benefit summary report and exports data with no filters.");
+            Console.WriteLine("Asserts: The excel sheet exists and is not 0 bytes");
+            Console.WriteLine("Assumes: The SmokeTest succesfully ran.");
             await page.GetByText("Run Report").Nth(0).ClickAsync();
 
             var filePath = await TestHelper.DownloadAndVerifyAsync(
@@ -27,6 +30,10 @@ namespace QA.AutomationTests.RegressionTests
         [TestMethod]
         public async Task BenefitDetailReport()
         {
+            Console.WriteLine("Description: This test opens the Benefit detail report family=Risk Type=Critical Illness, exports data.");
+            Console.WriteLine("Asserts: The excel sheet exists and is not 0 bytes");
+            Console.WriteLine("Assumes: The SmokeTest succesfully ran.");
+
             await page.GetByText("Run Report").Nth(1).ClickAsync();
 
             await Task.Delay(1000);
