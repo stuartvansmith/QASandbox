@@ -24,7 +24,7 @@ namespace QA.AutomationTests.RegressionTests
                 downloadsDir: "test-downloads",
                 timeoutMs: 30000
             );
-            TestBase.StopTimer("Benefit Details Report");
+            TestBase.StopTimer("Benefit Summary Report");
         }
 
         [TestMethod]
