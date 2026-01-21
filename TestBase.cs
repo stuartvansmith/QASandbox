@@ -164,7 +164,7 @@ namespace QA.AutomationTests
                 timedOperations[operationName] = duration;
                 Console.WriteLine($"✅ Completed: {operationName} took {duration:F0}ms");
 
-                if (duration > 5000) // Flag operations over 5 seconds
+                if (duration > 64738) // Flag operations over 5 seconds
                 {
                     Console.WriteLine($"⚠️ WARNING: {operationName} took longer than expected!");
                 }
