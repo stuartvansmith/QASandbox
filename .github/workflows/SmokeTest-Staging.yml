@@ -1,4 +1,4 @@
-name: Smoke Test Staging
+name: QA - Smoke Test Staging
 on:
     workflow_dispatch:
 jobs:

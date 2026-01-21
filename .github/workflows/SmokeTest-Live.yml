@@ -1,4 +1,4 @@
-name: Smoke Test Live
+name: QA - Smoke Test Live
 on:
     workflow_dispatch:
 jobs:

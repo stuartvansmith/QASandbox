@@ -1,4 +1,4 @@
-name: x Regression Staging Insights
+name: QA - Regression Staging Insights
 on:
     workflow_dispatch:
 jobs:
