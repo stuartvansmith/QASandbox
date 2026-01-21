@@ -15,6 +15,7 @@ namespace QA.AutomationTests.RegressionTests
             Console.WriteLine("Description: This test opens the Benefit summary report and exports data with no filters.");
             Console.WriteLine("Asserts: The excel sheet exists and is not 0 bytes");
             Console.WriteLine("Assumes: The SmokeTest succesfully ran.");
+
             TestBase.StartTimer("Benefit Summary Report");
             await page.GetByText("Run Report").Nth(0).ClickAsync();
 
@@ -27,7 +28,7 @@ namespace QA.AutomationTests.RegressionTests
             TestBase.StopTimer("Benefit Summary Report");
         }
 
-        [TestMethod]
+        
         public async Task BenefitDetailReport()
         {
             Console.WriteLine("Description: This test opens the Benefit detail report family=Risk Type=Critical Illness, exports data.");

@@ -97,7 +97,6 @@ namespace QA.AutomationTests
                     {
                         var message = $"{duration:F0}ms - {url}";
                         slowRequests.Add(message);
-                        Console.WriteLine($"⚠️ Slow request: {message}");
                     }
                     DateTime removed;
                     requestStartTimes.TryRemove(url, out removed); // Clean up
