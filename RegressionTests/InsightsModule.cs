@@ -15,6 +15,7 @@ namespace QA.AutomationTests.RegressionTests
             Console.WriteLine("Description: This test opens the Benefit summary report and exports data with no filters.");
             Console.WriteLine("Asserts: The excel sheet exists and is not 0 bytes");
             Console.WriteLine("Assumes: The SmokeTest succesfully ran.");
+            TestBase.StartTimer("Benefit Summary Report");
             await page.GetByText("Run Report").Nth(0).ClickAsync();
 
             var filePath = await TestHelper.DownloadAndVerifyAsync(
@@ -23,7 +24,7 @@ namespace QA.AutomationTests.RegressionTests
                 downloadsDir: "test-downloads",
                 timeoutMs: 30000
             );
-
+            TestBase.StopTimer("Benefit Details Report");
         }
 
         [TestMethod]
@@ -33,6 +34,7 @@ namespace QA.AutomationTests.RegressionTests
             Console.WriteLine("Asserts: The excel sheet exists and is not 0 bytes");
             Console.WriteLine("Assumes: The SmokeTest succesfully ran.");
 
+            TestBase.StartTimer("Benefit Details Report");
             await page.GetByText("Run Report").Nth(1).ClickAsync();
 
             await Task.Delay(1000);
@@ -62,7 +64,7 @@ namespace QA.AutomationTests.RegressionTests
                 downloadsDir: "test-downloads",
                 timeoutMs: 30000
             );
-
+            TestBase.StopTimer("Benefit Details Report");
         }
 
 
