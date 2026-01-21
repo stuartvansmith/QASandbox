@@ -25,10 +25,10 @@ namespace QA.AutomationTests.RegressionTests
                 downloadsDir: "test-downloads",
                 timeoutMs: 30000
             );
-            TestBase.StopTimer("Benefit Summary Report");
+           TestBase.StopTimer("Benefit Summary Report");
         }
 
-        
+        [TestMethod]
         public async Task BenefitDetailReport()
         {
             Console.WriteLine("Description: This test opens the Benefit detail report family=Risk Type=Critical Illness, exports data.");

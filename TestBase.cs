@@ -19,7 +19,7 @@ namespace QA.AutomationTests
         protected static ConcurrentDictionary<string, DateTime> requestStartTimes; // Add this
         protected static Dictionary<string, DateTime> namedTimers = new Dictionary<string, DateTime>();
         protected static Dictionary<string, double> timedOperations = new Dictionary<string, double>();
-
+        protected static List<string> allNetworkRequests = new List<string>();
 
 
         [TestInitialize]
@@ -28,6 +28,7 @@ namespace QA.AutomationTests
             slowRequests?.Clear();
             namedTimers?.Clear();
             timedOperations?.Clear();
+            allNetworkRequests?.Clear();
         }
 
         [ClassInitialize(InheritanceBehavior.BeforeEachDerivedClass)]
@@ -70,10 +71,6 @@ namespace QA.AutomationTests
 
             page = await browserContext.NewPageAsync();
 
-
-
-            Console.WriteLine("🔧 Setting up network monitoring...");
-
             slowRequests = new List<string>();
             requestStartTimes = new ConcurrentDictionary<string, DateTime>();
 
@@ -91,7 +88,7 @@ namespace QA.AutomationTests
                 if (requestStartTimes.TryGetValue(url, out var startTime))
                 {
                     var duration = (DateTime.Now - startTime).TotalMilliseconds;
-                    Console.WriteLine($"📡 {duration:F0}ms - {url}");
+                    allNetworkRequests.Add($"📡 {duration:F0}ms - {url}");
 
                     if (duration > 1500) 
                     {
@@ -103,9 +100,6 @@ namespace QA.AutomationTests
                 }
             };
 
-            Console.WriteLine("🔧 Network monitoring ready");
-
-
             await page.GotoAsync($"{BaseUrl}/login");
             await TestHelper.FinishLogin(page, "2026");
         }
@@ -113,11 +107,19 @@ namespace QA.AutomationTests
         [TestCleanup]
         public virtual async Task TestCleanUp()
         {
+            if (timedOperations != null && timedOperations.Any())
+            {
+                Console.WriteLine($"\n⏱️ Timed Operations:");
+                foreach (var op in timedOperations.OrderByDescending(x => x.Value))
+                {
+                    Console.WriteLine($"  {op.Key}: {op.Value:F0}ms");
+                }
+            }
             // Report network stats after each test
             if (slowRequests != null && slowRequests.Any())
             {
                 Console.WriteLine($"\n⚠️ Test completed with {slowRequests.Count} slow request(s):");
-                foreach (var req in slowRequests.Take(10))
+                foreach (var req in slowRequests)
                 {
                     Console.WriteLine($"  {req}");
                 }
@@ -127,14 +129,18 @@ namespace QA.AutomationTests
                 Console.WriteLine("✅ No slow requests detected in this test");
             }
 
-            // Report timed operations
-            if (timedOperations != null && timedOperations.Any())
+            
+            if (allNetworkRequests != null && allNetworkRequests.Any())
             {
-                Console.WriteLine($"\n⏱️ Timed Operations:");
-                foreach (var op in timedOperations.OrderByDescending(x => x.Value))
+                Console.WriteLine($"\n⚠️ All network requests :");
+                foreach (var req in allNetworkRequests)
                 {
-                    Console.WriteLine($"  {op.Key}: {op.Value:F0}ms");
+                    Console.WriteLine($"  {req}");
                 }
+            }
+            else
+            {
+                Console.WriteLine("✅ No slow requests detected in this test");
             }
         }
 
@@ -152,7 +158,7 @@ namespace QA.AutomationTests
         public static void StartTimer(string operationName)
         {
             namedTimers[operationName] = DateTime.Now;
-            Console.WriteLine($"⏱️ Started: {operationName}");
+           // Console.WriteLine($"⏱️ Started: {operationName}");
         }
 
         public static void StopTimer(string operationName)
@@ -161,12 +167,12 @@ namespace QA.AutomationTests
             {
                 var duration = (DateTime.Now - startTime).TotalMilliseconds;
                 timedOperations[operationName] = duration;
-                Console.WriteLine($"✅ Completed: {operationName} took {duration:F0}ms");
+                //Console.WriteLine($"✅ Completed: {operationName} took {duration:F0}ms");
 
-                if (duration > 64738) // Flag operations over 5 seconds
-                {
-                    Console.WriteLine($"⚠️ WARNING: {operationName} took longer than expected!");
-                }
+                //if (duration > 64738) // Flag operations over 5 seconds
+                //{
+                //    Console.WriteLine($"⚠️ WARNING: {operationName} took longer than expected!");
+                //}
 
                 namedTimers.Remove(operationName);
             }
