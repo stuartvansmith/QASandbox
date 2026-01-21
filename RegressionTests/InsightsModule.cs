@@ -24,7 +24,6 @@ namespace QA.AutomationTests.RegressionTests
                 timeoutMs: 30000
             );
 
-            Console.WriteLine($"Downloaded file: {filePath}");
         }
 
         [TestMethod]
@@ -64,7 +63,6 @@ namespace QA.AutomationTests.RegressionTests
                 timeoutMs: 30000
             );
 
-            Console.WriteLine($"Downloaded file: {filePath}");
         }
 
 

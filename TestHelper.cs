@@ -92,13 +92,14 @@ namespace QA.AutomationTests
         {
 
             await page.GetByRole(AriaRole.Link, new() { Name = "image Ask Cuido" }).ClickAsync();
-            
+
             var editBtn = page.GetByRole(AriaRole.Button, new() { Name = "edit_square" });
 
             await editBtn.ClickAsync();
-            
-            
+
+
             bool ratingQuestion = await page.GetByText("Overall, how satisfied were you with Cuido’s last conversation?").IsVisibleAsync();
+            
 
             if (ratingQuestion)
             {
@@ -141,6 +142,7 @@ namespace QA.AutomationTests
 
         internal static async Task SwitchCountry(IPage page, string countryName, int timeoutMs = 5000)
         {
+
             var regionPicker = page.Locator("div.rz-dropdown.rz-clear").First;
             await regionPicker.ClickAsync();
 

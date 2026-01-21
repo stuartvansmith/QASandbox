@@ -130,7 +130,7 @@ namespace QA.AutomationTests
 
             await page.GetByRole(AriaRole.Button, new() { Name = "> Next" }).ClickAsync();
 
-
+            TestBase.StartTimer("Document Ingestion");
             var filePath = Path.Combine(Directory.GetParent(Environment.CurrentDirectory)!.Parent!.Parent!.FullName,
                                         "Documents",
                                         "Critical illness policy.pdf");
@@ -146,6 +146,8 @@ namespace QA.AutomationTests
 
             await page.GetByText("Validate document import", new() { Exact = true })
                       .WaitForAsync(new() { State = WaitForSelectorState.Visible, Timeout = 300_000 });
+            TestBase.StopTimer("Document Ingestion");
+
             await page.GetByRole(AriaRole.Button, new() { Name = "Save", Exact = true }).ClickAsync();
             await page.GetByRole(AriaRole.Button, new() { Name = "Save without adding a note" }).ClickAsync();
 

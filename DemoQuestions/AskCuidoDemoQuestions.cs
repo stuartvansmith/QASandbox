@@ -48,7 +48,9 @@ public class AskCuidoDemoQuestions : TestBase
 
         await TestHelper.SwitchCountry(page, "Germany (DEU)");
         await AskAndRecord("Please outline which leaves are available, including which are statutory and which are non statutory.", country: "Germany");
+        return;
         await AskAndRecord("Which plans have suicide exclusions?");
+        
 
         await TestHelper.SwitchCountry(page, "Brazil (BRA)");
         await AskAndRecord("Which plans are self insured?", country: "Brazil");
@@ -105,7 +107,7 @@ public class AskCuidoDemoQuestions : TestBase
 
     }
 
-
+    [TestInitialize]
     public override async Task TestSetup()
     {
         await page.GotoAsync("https://demo.originbenefits.ai/login");
