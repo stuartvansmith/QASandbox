@@ -32,8 +32,7 @@ AskCuidoResults/
 # ===============================
 # Sensitive auth / state files
 # ===============================
-SSO/authState.json
-**/SSO/authState.json
+**/SSO/
 
 # ===============================
 # Logs

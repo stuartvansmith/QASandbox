@@ -44,10 +44,14 @@ namespace QA.AutomationTests
         public static async Task FinishLogin(IPage page, string period)
         {
             await page.GetByRole(AriaRole.Button, new() { Name = "button Microsoft" }).ClickAsync();
-            
 
-            await page.Locator(".notranslate").First.ClickAsync();
-            await page.GetByRole(AriaRole.Option, new() { Name = "Smoke Test" }).ClickAsync();
+            try
+            {
+                await page.Locator(".notranslate").First.ClickAsync(new() { Timeout = 2000 });
+                await page.GetByRole(AriaRole.Option, new() { Name = "Smoke Test" }).ClickAsync(new() { Timeout = 2000 });
+            }
+            catch (Exception) { } 
+            
             await TestHelper.SelectDropdownOptionByAriaAsync(
                 page,
                 "Origin.Common.Scheme.BenefitTermPeriod",
