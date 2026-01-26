@@ -20,7 +20,7 @@ jobs:
         shell: pwsh
         run: |
           New-Item -ItemType Directory -Force -Path SSO | Out-Null
-          $bytes = [Convert]::FromBase64String("${{ secrets.PLAYWRIGHT_AUTHSTATE_B64 }}")
+          $bytes = [Convert]::FromBase64String("${{ secrets.AUTH_STATE_RESTRICTED_ACCESS }}")
           [IO.File]::WriteAllBytes("SSO\authState.json", $bytes)
       - name: Install Playwright browsers
         shell: pwsh
