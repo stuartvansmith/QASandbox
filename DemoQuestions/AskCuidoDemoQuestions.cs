@@ -48,7 +48,7 @@ public class AskCuidoDemoQuestions : TestBase
 
         await TestHelper.SwitchCountry(page, "Germany (DEU)");
         await AskAndRecord("Please outline which leaves are available, including which are statutory and which are non statutory.", country: "Germany");
-        return;
+        
         await AskAndRecord("Which plans have suicide exclusions?");
         
 

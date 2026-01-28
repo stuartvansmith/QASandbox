@@ -64,7 +64,7 @@ namespace QA.AutomationTests
            IPage page,
            string inputAriaLabel,
            string optionText,
-           int timeoutMs = 10000)
+           int timeoutMs = 20000)
         {
 
             var dropdown = page.Locator($".rz-dropdown:has(.rz-helper-hidden-accessible input[aria-label='{inputAriaLabel}'])");

@@ -65,8 +65,8 @@ namespace QA.AutomationTests
                 Permissions = new[] { "geolocation" },
                 StorageStatePath = authPath,
                 AcceptDownloads = true,
-               // RecordVideoDir = "test-videos",
-               // RecordVideoSize = new() { Width = 1280, Height = 720 } 
+                RecordVideoDir = "test-videos",
+                RecordVideoSize = new() { Width = 1280, Height = 720 } 
             });
 
             page = await browserContext.NewPageAsync();
@@ -109,7 +109,7 @@ namespace QA.AutomationTests
         {
             if (timedOperations != null && timedOperations.Any())
             {
-                Console.WriteLine($"\n⏱️ Timed Operations:");
+                Console.WriteLine($"\n⏱ Timed Operations:");
                 foreach (var op in timedOperations.OrderByDescending(x => x.Value))
                 {
                     Console.WriteLine($"  {op.Key}: {op.Value:F0}ms");
@@ -142,6 +142,7 @@ namespace QA.AutomationTests
             {
                 Console.WriteLine("✅ No slow requests detected in this test");
             }
+            await LogNetworkRequestsToFile();
         }
 
         [ClassCleanup(InheritanceBehavior.BeforeEachDerivedClass)]
@@ -188,7 +189,37 @@ namespace QA.AutomationTests
                 ? timedOperations[operationName]
                 : -1;
         }
+        private async Task LogNetworkRequestsToFile()
+        {
+            var logDirectory = "network-logs";
+            Directory.CreateDirectory(logDirectory);
 
+            var timestamp = DateTime.UtcNow;
+            var fileName = $"network-requests-{timestamp:yyyy-MM-dd}.csv";
+            var filePath = Path.Combine(logDirectory, fileName);
+
+            bool fileExists = File.Exists(filePath);
+
+            using (var writer = new StreamWriter(filePath, append: true))
+            {
+                if (!fileExists)
+                {
+                    await writer.WriteLineAsync("Timestamp,DurationMs,Url");
+                }
+
+                foreach (var req in allNetworkRequests)
+                {
+                    var parts = req.Replace("📡 ", "").Split(new[] { "ms - " }, StringSplitOptions.None);
+                    if (parts.Length == 2)
+                    {
+                        var duration = parts[0].Trim();
+                        var url = parts[1].Trim().Replace(",", ";"); // Replace commas to keep CSV simple
+
+                        await writer.WriteLineAsync($"{timestamp:yyyy-MM-dd HH:mm:ss},{duration},{url}");
+                    }
+                }
+            }
+        }
     }
 
     
