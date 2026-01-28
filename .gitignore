@@ -20,6 +20,7 @@ TestResults/
 test-results/
 AskCuidoResults/
 **/test-results/
+**/network-Logs/
 
 # ===============================
 # Playwright artifacts
