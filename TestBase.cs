@@ -191,7 +191,11 @@ namespace QA.AutomationTests
         }
         private async Task LogNetworkRequestsToFile()
         {
-            var logDirectory = "network-logs";
+            // Write to repo root, not relative to test output
+            var root = Environment.GetEnvironmentVariable("GITHUB_WORKSPACE")
+                       ?? Directory.GetParent(Environment.CurrentDirectory)!.Parent!.Parent!.FullName;
+
+            var logDirectory = Path.Combine(root, "network-logs");
             Directory.CreateDirectory(logDirectory);
 
             var timestamp = DateTime.UtcNow;
@@ -213,7 +217,7 @@ namespace QA.AutomationTests
                     if (parts.Length == 2)
                     {
                         var duration = parts[0].Trim();
-                        var url = parts[1].Trim().Replace(",", ";"); // Replace commas to keep CSV simple
+                        var url = parts[1].Trim().Replace(",", ";");
 
                         await writer.WriteLineAsync($"{timestamp:yyyy-MM-dd HH:mm:ss},{duration},{url}");
                     }
