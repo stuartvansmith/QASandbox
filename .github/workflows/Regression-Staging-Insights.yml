@@ -42,3 +42,11 @@ jobs:
         with:
           name: test-results
           path: TestResults/**
+      - name: Upload network logs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+         name: network-logs
+         path: network-logs/
+         retention-days: 90       
+        
