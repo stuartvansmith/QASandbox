@@ -47,6 +47,6 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
          name: network-logs
-         path: network-logs/
+         path: '**/network-logs/**'
          retention-days: 90       
         
