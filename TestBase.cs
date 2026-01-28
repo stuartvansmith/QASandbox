@@ -195,7 +195,7 @@ namespace QA.AutomationTests
             Directory.CreateDirectory(logDirectory);
 
             var timestamp = DateTime.UtcNow;
-            var fileName = $"network-requests-{timestamp:yyyy-MM-dd}.csv";
+            var fileName = $"network-requests-{timestamp:yyyy-MM-dd HH:mm:ss}.csv";
             var filePath = Path.Combine(logDirectory, fileName);
 
             bool fileExists = File.Exists(filePath);
