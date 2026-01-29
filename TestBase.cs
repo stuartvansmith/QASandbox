@@ -20,7 +20,8 @@ namespace QA.AutomationTests
         protected static Dictionary<string, DateTime> namedTimers = new Dictionary<string, DateTime>();
         protected static Dictionary<string, double> timedOperations = new Dictionary<string, double>();
         protected static List<string> allNetworkRequests = new List<string>();
-
+        protected static string RootDirectory => Environment.GetEnvironmentVariable("GITHUB_WORKSPACE")
+                       ?? Directory.GetParent(Environment.CurrentDirectory)!.Parent!.Parent!.FullName;
 
         [TestInitialize]
         public virtual async Task TestSetup()
@@ -43,11 +44,10 @@ namespace QA.AutomationTests
             });
 
             
-            var root = Environment.GetEnvironmentVariable("GITHUB_WORKSPACE")
-                       ?? Directory.GetParent(Environment.CurrentDirectory)!.Parent!.Parent!.FullName;
+           
 
             // Build path to SSO/authState.json
-            var authPath = Path.Combine(root, "SSO", "authState.json");
+            var authPath = Path.Combine(RootDirectory, "SSO", "authState.json");
 
             // Make sure folder exists
             Directory.CreateDirectory(Path.GetDirectoryName(authPath)!);
@@ -58,7 +58,7 @@ namespace QA.AutomationTests
                 throw new FileNotFoundException($"authState.json not found at {authPath}");
             }
             // Video directory at root
-            var videoDirectory = Path.Combine(root, "test-videos");
+            var videoDirectory = Path.Combine(RootDirectory, "test-videos");
             Directory.CreateDirectory(videoDirectory);
 
             browserContext = await browser.NewContextAsync(new BrowserNewContextOptions
@@ -192,10 +192,9 @@ namespace QA.AutomationTests
         }
         private async Task LogNetworkRequestsToFile()
         {
-            var root = Environment.GetEnvironmentVariable("GITHUB_WORKSPACE")
-                       ?? Directory.GetParent(Environment.CurrentDirectory)!.Parent!.Parent!.FullName;
 
-            var logDirectory = Path.Combine(root, "network-logs");
+
+            var logDirectory = Path.Combine(RootDirectory, "network-logs");
             Directory.CreateDirectory(logDirectory);
 
             var timestamp = DateTime.UtcNow;
