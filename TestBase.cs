@@ -234,6 +234,14 @@ namespace QA.AutomationTests
 
         private string GetCategory(string url)
         {
+            
+            if (url.Contains("api.origin", StringComparison.OrdinalIgnoreCase))
+                return "Origin Api";
+
+
+            if (url.Contains("/login", StringComparison.OrdinalIgnoreCase))
+                return "Login";
+
             if (url.Contains(".wasm", StringComparison.OrdinalIgnoreCase) ||
                 url.Contains("blazor", StringComparison.OrdinalIgnoreCase))
                 return "Framework";
