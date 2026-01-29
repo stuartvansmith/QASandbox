@@ -1,0 +1,59 @@
+name: QA - Regression Demo AsCuido
+on:
+    workflow_dispatch:
+jobs:
+  test:
+    runs-on: windows-latest
+    env:
+      CI: "true"
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: "8.0.x"
+      - name: Restore
+        run: dotnet restore
+      - name: Build
+        run: dotnet build --configuration Debug
+      - name: Restore Playwright auth state
+        shell: pwsh
+        run: |
+          New-Item -ItemType Directory -Force -Path SSO | Out-Null
+          $bytes = [Convert]::FromBase64String("${{ secrets.PLAYWRIGHT_AUTHSTATE_B64 }}")
+          [IO.File]::WriteAllBytes("SSO\authState.json", $bytes)
+      - name: Install Playwright browsers
+        shell: pwsh
+        run: |
+          .\bin\Debug\net8.0\playwright.ps1 install
+     
+      - name: Test (only insights test Class)
+        shell: pwsh
+        run: |
+          dotnet vstest bin\Debug\net8.0\QA.AutomationTests.dll `
+            /TestCaseFilter:"FullyQualifiedName~QA.AutomationTests.DemoQuestions.AskCuidoDemoQuestions" `
+            /Logger:"trx;LogFileName=test-results.trx"
+        env:
+          TEST_BASE_URL: "https://demo.originbenefits.ai"
+  
+      - name: Upload test results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-results
+          path: TestResults/**
+      - name: Upload network logs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+         name: network-logs
+         path: network-logs/**
+         retention-days: 90
+      - name: Upload test videos
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-videos
+          path: test-videos/**
+          retention-days: 30
+        
