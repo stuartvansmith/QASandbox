@@ -57,6 +57,9 @@ namespace QA.AutomationTests
             {
                 throw new FileNotFoundException($"authState.json not found at {authPath}");
             }
+            // Video directory at root
+            var videoDirectory = Path.Combine(root, "test-videos");
+            Directory.CreateDirectory(videoDirectory);
 
             browserContext = await browser.NewContextAsync(new BrowserNewContextOptions
             {
@@ -65,7 +68,7 @@ namespace QA.AutomationTests
                 Permissions = new[] { "geolocation" },
                 StorageStatePath = authPath,
                 AcceptDownloads = true,
-                RecordVideoDir = "test-videos",
+                RecordVideoDir = videoDirectory,
                 RecordVideoSize = new() { Width = 1280, Height = 720 } 
             });
 
@@ -115,7 +118,7 @@ namespace QA.AutomationTests
                     Console.WriteLine($"  {op.Key}: {op.Value:F0}ms");
                 }
             }
-            // Report network stats after each test
+
             if (slowRequests != null && slowRequests.Any())
             {
                 Console.WriteLine($"\n⚠️ Test completed with {slowRequests.Count} slow request(s):");
@@ -129,20 +132,18 @@ namespace QA.AutomationTests
                 Console.WriteLine("✅ No slow requests detected in this test");
             }
 
-            
             if (allNetworkRequests != null && allNetworkRequests.Any())
             {
-                Console.WriteLine($"\n⚠️ All network requests :");
-                foreach (var req in allNetworkRequests)
+                try
                 {
-                    Console.WriteLine($"  {req}");
+                    await LogNetworkRequestsToFile();
+                    Console.WriteLine("✅ Network logs written successfully");
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"⚠️ Failed to write network logs: {ex.Message}");
                 }
             }
-            else
-            {
-                Console.WriteLine("✅ No slow requests detected in this test");
-            }
-            await LogNetworkRequestsToFile();
         }
 
         [ClassCleanup(InheritanceBehavior.BeforeEachDerivedClass)]
@@ -191,7 +192,6 @@ namespace QA.AutomationTests
         }
         private async Task LogNetworkRequestsToFile()
         {
-            // Write to repo root, not relative to test output
             var root = Environment.GetEnvironmentVariable("GITHUB_WORKSPACE")
                        ?? Directory.GetParent(Environment.CurrentDirectory)!.Parent!.Parent!.FullName;
 
@@ -199,16 +199,18 @@ namespace QA.AutomationTests
             Directory.CreateDirectory(logDirectory);
 
             var timestamp = DateTime.UtcNow;
-            var fileName = $"network-requests-{timestamp:yyyy-MM-dd HHmmss}.csv";
+            var fileName = $"network-requests-{timestamp:yyyy-MM-dd}.csv";
             var filePath = Path.Combine(logDirectory, fileName);
 
             bool fileExists = File.Exists(filePath);
 
-            using (var writer = new StreamWriter(filePath, append: true))
+            var testEnv = GetEnvironmentFromBaseUrl(BaseUrl);
+
+            await using (var writer = new StreamWriter(filePath, append: true))
             {
                 if (!fileExists)
                 {
-                    await writer.WriteLineAsync("Timestamp,DurationMs,Url");
+                    await writer.WriteLineAsync("Date,Timestamp,Env,Category,DurationMs,Url");
                 }
 
                 foreach (var req in allNetworkRequests)
@@ -218,11 +220,50 @@ namespace QA.AutomationTests
                     {
                         var duration = parts[0].Trim();
                         var url = parts[1].Trim().Replace(",", ";");
+                        var category = GetCategory(url);
+                        var date = timestamp.ToString("yyyy-MM-dd");
+                        var time = timestamp.ToString("yyyy-MM-dd HH:mm:ss");
 
-                        await writer.WriteLineAsync($"{timestamp:yyyy-MM-dd HH:mm:ss},{duration},{url}");
+                        await writer.WriteLineAsync($"{date},{time},{testEnv},{category},{duration},{url}");
                     }
                 }
+
+                await writer.FlushAsync();
             }
+        }
+
+        private string GetCategory(string url)
+        {
+            if (url.Contains(".wasm", StringComparison.OrdinalIgnoreCase) ||
+                url.Contains("blazor", StringComparison.OrdinalIgnoreCase))
+                return "Framework";
+
+            if (url.Contains(".png", StringComparison.OrdinalIgnoreCase) ||
+                url.Contains(".jpg", StringComparison.OrdinalIgnoreCase) ||
+                url.Contains(".svg", StringComparison.OrdinalIgnoreCase))
+                return "Images";
+
+            if (url.Contains(".js", StringComparison.OrdinalIgnoreCase) ||
+                url.Contains(".css", StringComparison.OrdinalIgnoreCase))
+                return "Scripts";
+
+            if (url.Contains("/api/", StringComparison.OrdinalIgnoreCase) ||
+                url.Contains("/Hub/", StringComparison.OrdinalIgnoreCase))
+                return "API";
+
+            return "Other";
+        }
+
+        static string GetEnvironmentFromBaseUrl(string url)
+        {
+            if (url.Contains("staging.originbenefits.ai", StringComparison.OrdinalIgnoreCase))
+                return "Staging";
+            if (url.Contains("demo.originbenefits.ai", StringComparison.OrdinalIgnoreCase))
+                return "Demo";
+            if (url.Contains("web-origin-live.azurewebsites.net", StringComparison.OrdinalIgnoreCase))
+                return "Production";
+
+            return "Unknown";
         }
     }
 

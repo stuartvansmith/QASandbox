@@ -21,6 +21,7 @@ test-results/
 AskCuidoResults/
 **/test-results/
 **/network-Logs/
+**/test-videos/
 
 # ===============================
 # Playwright artifacts
