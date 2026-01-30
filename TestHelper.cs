@@ -107,11 +107,11 @@ namespace QA.AutomationTests
         internal static async Task AskCuidoQuestion(IPage page, string question, string filterOnBen)
         {
 
-            await page.GetByRole(AriaRole.Link, new() { Name = "image Ask Cuido" }).ClickAsync();
+            await page.GetByRole(AriaRole.Link, new() { Name = "image Ask Cuido" }).ClickAsync(new() { Timeout = 30000 });
 
             var editBtn = page.GetByRole(AriaRole.Button, new() { Name = "edit_square" });
 
-            await editBtn.ClickAsync();
+            await editBtn.ClickAsync(new() { Timeout = 30000 });
 
 
             bool ratingQuestion = await page.GetByText("Overall, how satisfied were you with Cuido’s last conversation?").IsVisibleAsync();
