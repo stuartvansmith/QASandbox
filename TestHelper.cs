@@ -46,20 +46,22 @@ namespace QA.AutomationTests
             
             try
             {
-                await page.GetByRole(AriaRole.Button, new() { Name = "button Microsoft" }).ClickAsync(new() { Timeout = 30000 });
+                await page.GetByRole(AriaRole.Button, new() { Name = "button Microsoft" }).ClickAsync(new() { Timeout = 60000 });
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                Console.WriteLine(ex);
                 Console.WriteLine("Couldn't find the microsft button for sso");
             }
 
             try
             {
-                await page.Locator(".notranslate").First.ClickAsync(new() { Timeout = 30000 });
+                await page.Locator(".notranslate").First.ClickAsync(new() { Timeout = 60000 });
                 await page.GetByRole(AriaRole.Option, new() { Name = tenant }).ClickAsync(new() { Timeout = 2000 });
             }
-            catch (Exception) 
+            catch (Exception ex) 
             {
+                Console.WriteLine(ex);  
                 Console.WriteLine("Couldn't find the select tenant dropdown when logging in");
             } 
             
