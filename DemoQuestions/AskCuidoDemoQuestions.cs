@@ -16,20 +16,7 @@ public class QAPair
 [DoNotParallelize]
 public class AskCuidoDemoQuestions : TestBase
 {
-    [TestInitialize]
-    public override async Task TestSetup()
-    {
-        Console.WriteLine("?? AskCuido TestSetup - Starting");
-        await base.TestSetup();
-
-        Console.WriteLine("?? Navigating to demo.originbenefits.ai/login");
-        await page.GotoAsync("https://demo.originbenefits.ai/login");
-
-        Console.WriteLine("?? Calling FinishLogin");
-        await TestHelper.FinishLogin(page, "2026", "Global Corp");
-
-        Console.WriteLine("?? AskCuido TestSetup - Complete");
-    }
+ 
 
     [TestMethod]
     public async Task SalesDemoQuestions()
@@ -124,13 +111,5 @@ public class AskCuidoDemoQuestions : TestBase
         wb.SaveAs(filePath);
     }
 
-    [TestInitialize]
-    public override async Task TestSetup()
-    {
-        await base.TestSetup();
-        await page.GotoAsync("https://demo.originbenefits.ai/login");
-        await TestHelper.FinishLogin(page, "2026", "Global Corp");
-        
-    }
 }
 

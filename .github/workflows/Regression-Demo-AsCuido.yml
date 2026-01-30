@@ -27,7 +27,7 @@ jobs:
         run: |
           .\bin\Debug\net8.0\playwright.ps1 install
      
-      - name: Test (only insights test Class)
+      - name: Test AsCuido Demo Questions
         shell: pwsh
         run: |
           dotnet vstest bin\Debug\net8.0\QA.AutomationTests.dll `
@@ -35,6 +35,7 @@ jobs:
             /Logger:"trx;LogFileName=test-results.trx"
         env:
           TEST_BASE_URL: "https://demo.originbenefits.ai"
+          TEST_TENANT: "Global Corp"
   
       - name: Upload test results
         if: always()
