@@ -68,8 +68,8 @@ namespace QA.AutomationTests
                 Permissions = new[] { "geolocation" },
                 StorageStatePath = authPath,
                 AcceptDownloads = true,
-                //RecordVideoDir = videoDirectory,
-                //RecordVideoSize = new() { Width = 1280, Height = 720 } 
+                RecordVideoDir = videoDirectory,
+                RecordVideoSize = new() { Width = 1280, Height = 720 }
             });
 
             page = await browserContext.NewPageAsync();
@@ -150,10 +150,13 @@ namespace QA.AutomationTests
         public static async Task Teardown()
         {
             if (browserContext != null)
-                await browserContext.CloseAsync();  
+                await browserContext.CloseAsync();
 
             if (browser != null)
+            {
                 await browser.CloseAsync();
+                await Task.Delay(1000);
+            }
 
             playwright?.Dispose();
         }
