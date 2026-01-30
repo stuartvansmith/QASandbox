@@ -41,16 +41,27 @@ namespace QA.AutomationTests
 
             return filePath;
         }
-        public static async Task FinishLogin(IPage page, string period)
+        public static async Task FinishLogin(IPage page, string period, string tenant = "Smoke Test")
         {
-            await page.GetByRole(AriaRole.Button, new() { Name = "button Microsoft" }).ClickAsync();
+            //await Task.Delay(10000);
+            try
+            {
+                await page.GetByRole(AriaRole.Button, new() { Name = "button Microsoft" }).ClickAsync(new() { Timeout = 30000 });
+            }
+            catch (Exception)
+            {
+                Console.WriteLine("Couldn't find the microsft button for sso");
+            }
 
             try
             {
-                await page.Locator(".notranslate").First.ClickAsync(new() { Timeout = 2000 });
-                await page.GetByRole(AriaRole.Option, new() { Name = "Smoke Test" }).ClickAsync(new() { Timeout = 2000 });
+                await page.Locator(".notranslate").First.ClickAsync(new() { Timeout = 30000 });
+                await page.GetByRole(AriaRole.Option, new() { Name = tenant }).ClickAsync(new() { Timeout = 2000 });
             }
-            catch (Exception) { } 
+            catch (Exception) 
+            {
+                Console.WriteLine("Couldn't find the select tenant dropdown when logging in");
+            } 
             
             await TestHelper.SelectDropdownOptionByAriaAsync(
                 page,
@@ -67,6 +78,7 @@ namespace QA.AutomationTests
            int timeoutMs = 20000)
         {
 
+            //await page.PauseAsync();
             var dropdown = page.Locator($".rz-dropdown:has(.rz-helper-hidden-accessible input[aria-label='{inputAriaLabel}'])");
             await dropdown.First.WaitForAsync(new() { Timeout = timeoutMs });
 

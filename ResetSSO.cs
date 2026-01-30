@@ -34,7 +34,8 @@ public class ResetSSO
             Locale = "en-GB",
             TimezoneId = "Europe/London",
             Permissions = new[] { "geolocation" },
-            AcceptDownloads = true,
+            AcceptDownloads = true
+            
             // RecordVideoDir = "test-videos",
             // RecordVideoSize = new() { Width = 1280, Height = 720 } 
         });

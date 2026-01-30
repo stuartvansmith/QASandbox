@@ -14,7 +14,7 @@ namespace QA.AutomationTests
 
         protected static string? authPath;
         protected static string BaseUrl => Environment.GetEnvironmentVariable("TEST_BASE_URL")
-                                       ?? "https://staging.originbenefits.ai"; // Default fallback
+                                       ?? "https://staging.originbenefits.ai/"; // Default fallback
         protected static List<string> slowRequests;
         protected static ConcurrentDictionary<string, DateTime> requestStartTimes; // Add this
         protected static Dictionary<string, DateTime> namedTimers = new Dictionary<string, DateTime>();
@@ -68,8 +68,8 @@ namespace QA.AutomationTests
                 Permissions = new[] { "geolocation" },
                 StorageStatePath = authPath,
                 AcceptDownloads = true,
-                RecordVideoDir = videoDirectory,
-                RecordVideoSize = new() { Width = 1280, Height = 720 } 
+                //RecordVideoDir = videoDirectory,
+                //RecordVideoSize = new() { Width = 1280, Height = 720 } 
             });
 
             page = await browserContext.NewPageAsync();
@@ -145,7 +145,7 @@ namespace QA.AutomationTests
                 }
             }
         }
-
+       
         [ClassCleanup(InheritanceBehavior.BeforeEachDerivedClass)]
         public static async Task Teardown()
         {
@@ -190,11 +190,15 @@ namespace QA.AutomationTests
                 ? timedOperations[operationName]
                 : -1;
         }
+
         private async Task LogNetworkRequestsToFile()
         {
+            // In CI: write to repo root (for artifacts)
+            // Locally: write to temp folder (to avoid VS freeze)
+            var logDirectory = Environment.GetEnvironmentVariable("GITHUB_WORKSPACE") != null
+                ? Path.Combine(Environment.GetEnvironmentVariable("GITHUB_WORKSPACE")!, "network-logs")
+                : Path.Combine(Path.GetTempPath(), "OriginNetworkLogs");
 
-
-            var logDirectory = Path.Combine(RootDirectory, "network-logs");
             Directory.CreateDirectory(logDirectory);
 
             var timestamp = DateTime.UtcNow;
@@ -229,6 +233,8 @@ namespace QA.AutomationTests
 
                 await writer.FlushAsync();
             }
+
+            Console.WriteLine($"✅ Logs written to: {logDirectory}");
         }
 
         private string GetCategory(string url)

@@ -110,16 +110,9 @@ public class AskCuidoDemoQuestions : TestBase
     [TestInitialize]
     public override async Task TestSetup()
     {
+        await base.TestSetup();
         await page.GotoAsync("https://demo.originbenefits.ai/login");
-        await page.GetByRole(AriaRole.Button, new() { Name = "button Microsoft" }).ClickAsync();
-        await page.Locator(".notranslate").First.ClickAsync();
-        await page.GetByRole(AriaRole.Option, new() { Name = "Global Corp" }).ClickAsync();
-        await TestHelper.SelectDropdownOptionByAriaAsync(
-            page,
-            "Origin.Common.Scheme.BenefitTermPeriod",
-            "2026"
-        );
-        await page.GetByRole(AriaRole.Button, new() { Name = "navigate_next Next" }).ClickAsync();
+        await TestHelper.FinishLogin(page, "2026", "Global Corp");
         
     }
 }
