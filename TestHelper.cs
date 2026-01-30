@@ -43,7 +43,7 @@ namespace QA.AutomationTests
         }
         public static async Task FinishLogin(IPage page, string period, string tenant = "Smoke Test")
         {
-            //await Task.Delay(10000);
+            
             try
             {
                 await page.GetByRole(AriaRole.Button, new() { Name = "button Microsoft" }).ClickAsync(new() { Timeout = 30000 });
@@ -68,7 +68,7 @@ namespace QA.AutomationTests
                 "Origin.Common.Scheme.BenefitTermPeriod",
                 period
             );
-            await page.GetByRole(AriaRole.Button, new() { Name = "navigate_next Next" }).ClickAsync();
+            await page.GetByRole(AriaRole.Button, new() { Name = "navigate_next Next" }).ClickAsync(new() { Timeout = 20000 });
         }
 
         public static async Task SelectDropdownOptionByAriaAsync(
@@ -78,7 +78,7 @@ namespace QA.AutomationTests
            int timeoutMs = 20000)
         {
 
-            //await page.PauseAsync();
+            
             var dropdown = page.Locator($".rz-dropdown:has(.rz-helper-hidden-accessible input[aria-label='{inputAriaLabel}'])");
             await dropdown.First.WaitForAsync(new() { Timeout = timeoutMs });
 
