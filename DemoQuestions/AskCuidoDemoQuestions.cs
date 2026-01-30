@@ -16,7 +16,21 @@ public class QAPair
 [DoNotParallelize]
 public class AskCuidoDemoQuestions : TestBase
 {
-   
+    [TestInitialize]
+    public override async Task TestSetup()
+    {
+        Console.WriteLine("?? AskCuido TestSetup - Starting");
+        await base.TestSetup();
+
+        Console.WriteLine("?? Navigating to demo.originbenefits.ai/login");
+        await page.GotoAsync("https://demo.originbenefits.ai/login");
+
+        Console.WriteLine("?? Calling FinishLogin");
+        await TestHelper.FinishLogin(page, "2026", "Global Corp");
+
+        Console.WriteLine("?? AskCuido TestSetup - Complete");
+    }
+
     [TestMethod]
     public async Task SalesDemoQuestions()
     {
@@ -99,12 +113,15 @@ public class AskCuidoDemoQuestions : TestBase
             row++;
         }
         
-        var filePath = Path.Combine(Directory.GetParent(Environment.CurrentDirectory)!.Parent!.Parent!.FullName,
-                            "AskCuidoResults",
-                            $"SalesDemoQuestions_{DateTime.UtcNow:yyyyMMdd_HHmmss}.xlsx");
+        
+        var filePath = Path.Combine(
+            RootDirectory,
+            "AskCuidoResults",
+            $"SalesDemoQuestions_{DateTime.UtcNow:yyyyMMdd_HHmmss}.xlsx");
+
+        Directory.CreateDirectory(Path.GetDirectoryName(filePath)!);
 
         wb.SaveAs(filePath);
-
     }
 
     [TestInitialize]

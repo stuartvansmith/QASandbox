@@ -11,7 +11,7 @@ namespace QA.AutomationTests
         protected static IPage page;
         protected static IPlaywright playwright;
         protected static IBrowserContext browserContext;
-
+        
         protected static string? authPath;
         protected static string BaseUrl => Environment.GetEnvironmentVariable("TEST_BASE_URL")
                                        ?? "https://staging.originbenefits.ai/"; // Default fallback
@@ -43,8 +43,7 @@ namespace QA.AutomationTests
                 Headless = headless,
             });
 
-            
-           
+                      
 
             // Build path to SSO/authState.json
             var authPath = Path.Combine(RootDirectory, "SSO", "authState.json");
@@ -102,7 +101,7 @@ namespace QA.AutomationTests
                     requestStartTimes.TryRemove(url, out removed); // Clean up
                 }
             };
-
+            
             await page.GotoAsync($"{BaseUrl}/login");
             await TestHelper.FinishLogin(page, "2026");
         }
