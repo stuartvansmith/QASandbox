@@ -160,9 +160,19 @@ namespace QA.AutomationTests
 
         internal static async Task SwitchCountry(IPage page, string countryName, int timeoutMs = 60000)
         {
-
             var regionPicker = page.Locator("div.rz-dropdown.rz-clear").First;
+
+            // Wait for the dropdown to be stable before clicking
+            await regionPicker.WaitForAsync(new()
+            {
+                State = WaitForSelectorState.Visible,
+                Timeout = timeoutMs
+            });
+
             await regionPicker.ClickAsync();
+
+            // Add a small buffer for the listbox to start appearing
+            await page.WaitForTimeoutAsync(100);
 
             var listbox = page.GetByRole(AriaRole.Listbox).First;
             await listbox.WaitForAsync(new()
@@ -172,7 +182,6 @@ namespace QA.AutomationTests
             });
 
             var option = listbox.GetByText(countryName, new() { Exact = true }).First;
-
             await option.ClickAsync(new()
             {
                 Timeout = timeoutMs
@@ -183,6 +192,28 @@ namespace QA.AutomationTests
                 State = WaitForSelectorState.Hidden,
                 Timeout = timeoutMs
             });
+            //var regionPicker = page.Locator("div.rz-dropdown.rz-clear").First;
+            //await regionPicker.ClickAsync();
+
+            //var listbox = page.GetByRole(AriaRole.Listbox).First;
+            //await listbox.WaitForAsync(new()
+            //{
+            //    State = WaitForSelectorState.Visible,
+            //    Timeout = timeoutMs
+            //});
+
+            //var option = listbox.GetByText(countryName, new() { Exact = true }).First;
+
+            //await option.ClickAsync(new()
+            //{
+            //    Timeout = timeoutMs
+            //});
+
+            //await listbox.WaitForAsync(new()
+            //{
+            //    State = WaitForSelectorState.Hidden,
+            //    Timeout = timeoutMs
+            //});
 
         }
 

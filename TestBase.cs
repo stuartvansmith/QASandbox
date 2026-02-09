@@ -14,9 +14,12 @@ namespace QA.AutomationTests
         
         protected static string? authPath;
         protected static string BaseUrl => Environment.GetEnvironmentVariable("TEST_BASE_URL")
-                                       ?? "https://staging.originbenefits.ai/"; // Default fallback
+                                       ?? "https://demo.originbenefits.ai/"; // Default fallback
+
+        
+
         protected static string TestTenant => Environment.GetEnvironmentVariable("TEST_TENANT")
-                                      ?? "Smoke Test"; // Default fallback
+                                      ?? "Global Corp"; // Default fallback
         protected static List<string> slowRequests;
         protected static ConcurrentDictionary<string, DateTime> requestStartTimes; // Add this
         protected static Dictionary<string, DateTime> namedTimers = new Dictionary<string, DateTime>();
