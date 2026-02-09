@@ -162,34 +162,40 @@ namespace QA.AutomationTests
         {
             var regionPicker = page.Locator("div.rz-dropdown.rz-clear").First;
 
-            // Wait for the dropdown to be stable before clicking
-            await regionPicker.WaitForAsync(new()
-            {
-                State = WaitForSelectorState.Visible,
-                Timeout = timeoutMs
-            });
+            // Log what we're seeing
+            Console.WriteLine($"=== DROPDOWN DEBUG START ===");
+            Console.WriteLine($"Page URL: {page.Url}");
+            Console.WriteLine($"Dropdown count: {await page.Locator("div.rz-dropdown.rz-clear").CountAsync()}");
+            Console.WriteLine($"Dropdown visible: {await regionPicker.IsVisibleAsync()}");
+            Console.WriteLine($"Dropdown enabled: {await regionPicker.IsEnabledAsync()}");
 
-            await regionPicker.ClickAsync();
+            // Take screenshot before
+            await page.ScreenshotAsync(new() { Path = "test-videos/before-dropdown-click.png", FullPage = true });
 
-            // Add a small buffer for the listbox to start appearing
-            await page.WaitForTimeoutAsync(100);
+            await regionPicker.ClickAsync(new() { Timeout = timeoutMs });
+            Console.WriteLine("Click completed");
+
+            // Take screenshot after
+            await page.ScreenshotAsync(new() { Path = "test-videos/after-dropdown-click.png", FullPage = true });
+
+            // Check what happened
+            var listboxCount = await page.GetByRole(AriaRole.Listbox).CountAsync();
+            Console.WriteLine($"Listbox count after click: {listboxCount}");
+
+            // Check if dropdown has aria-expanded
+            var ariaExpanded = await regionPicker.GetAttributeAsync("aria-expanded");
+            Console.WriteLine($"Dropdown aria-expanded: {ariaExpanded}");
+
+            // Log all listboxes on the page
+            var allListboxes = await page.Locator("[role='listbox']").CountAsync();
+            Console.WriteLine($"All elements with role=listbox: {allListboxes}");
+
+            Console.WriteLine($"=== DROPDOWN DEBUG END ===");
 
             var listbox = page.GetByRole(AriaRole.Listbox).First;
             await listbox.WaitForAsync(new()
             {
                 State = WaitForSelectorState.Visible,
-                Timeout = timeoutMs
-            });
-
-            var option = listbox.GetByText(countryName, new() { Exact = true }).First;
-            await option.ClickAsync(new()
-            {
-                Timeout = timeoutMs
-            });
-
-            await listbox.WaitForAsync(new()
-            {
-                State = WaitForSelectorState.Hidden,
                 Timeout = timeoutMs
             });
             //var regionPicker = page.Locator("div.rz-dropdown.rz-clear").First;
