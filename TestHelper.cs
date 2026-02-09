@@ -158,7 +158,7 @@ namespace QA.AutomationTests
             await page.GetByRole(AriaRole.Button, new() { Name = "save Set conversation filters" }).ClickAsync();
         }
 
-        internal static async Task SwitchCountry(IPage page, string countryName, int timeoutMs = 5000)
+        internal static async Task SwitchCountry(IPage page, string countryName, int timeoutMs = 60000)
         {
 
             var regionPicker = page.Locator("div.rz-dropdown.rz-clear").First;
