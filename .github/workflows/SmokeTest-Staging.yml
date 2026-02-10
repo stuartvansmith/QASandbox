@@ -35,6 +35,7 @@ jobs:
             /Logger:"trx;LogFileName=test-results.trx"
         env:
           TEST_BASE_URL: "https://staging.originbenefits.ai"
+          TEST_TENANT: "Smoke Test"
             
       - name: Upload test results
         if: always()

@@ -35,6 +35,7 @@ jobs:
             /Logger:"trx;LogFileName=test-results.trx"
         env:
           TEST_BASE_URL: "https://web-origin-live.azurewebsites.net"
+          TEST_TENANT: "Smoke Test"
             
       - name: Upload test results
         if: always()
