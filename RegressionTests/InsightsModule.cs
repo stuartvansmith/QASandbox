@@ -74,6 +74,7 @@ namespace QA.AutomationTests.RegressionTests
         [TestInitialize]
         public override async Task TestSetup() 
         {
+            base.TestSetup();
             await page.GetByRole(AriaRole.Link, new() { Name = "lightbulb_circle Insights" }).ClickAsync();
         }
     }
