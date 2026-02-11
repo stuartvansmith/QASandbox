@@ -24,7 +24,8 @@ namespace QA.AutomationTests
         protected static ConcurrentDictionary<string, DateTime> requestStartTimes; // Add this
         protected static Dictionary<string, DateTime> namedTimers = new Dictionary<string, DateTime>();
         protected static Dictionary<string, double> timedOperations = new Dictionary<string, double>();
-        protected static List<string> allNetworkRequests = new List<string>();
+
+        protected static List<NetworkRequestData> allNetworkRequests = new List<NetworkRequestData>();
         protected static string RootDirectory => Environment.GetEnvironmentVariable("GITHUB_WORKSPACE")
                        ?? Directory.GetParent(Environment.CurrentDirectory)!.Parent!.Parent!.FullName;
 
@@ -88,6 +89,24 @@ namespace QA.AutomationTests
             };
 
             // Track when responses arrive
+            //page.Response += async (_, response) =>
+            //{
+            //    var url = response.Url;
+
+            //    if (requestStartTimes.TryGetValue(url, out var startTime))
+            //    {
+            //        var duration = (DateTime.Now - startTime).TotalMilliseconds;
+            //        allNetworkRequests.Add($"📡 {duration:F0}ms - {url}");
+
+            //        if (duration > 1500) 
+            //        {
+            //            var message = $"{duration:F0}ms - {url}";
+            //            slowRequests.Add(message);
+            //        }
+            //        DateTime removed;
+            //        requestStartTimes.TryRemove(url, out removed); // Clean up
+            //    }
+            //};
             page.Response += async (_, response) =>
             {
                 var url = response.Url;
@@ -95,18 +114,33 @@ namespace QA.AutomationTests
                 if (requestStartTimes.TryGetValue(url, out var startTime))
                 {
                     var duration = (DateTime.Now - startTime).TotalMilliseconds;
-                    allNetworkRequests.Add($"📡 {duration:F0}ms - {url}");
 
-                    if (duration > 1500) 
+                    long sizeBytes = 0;
+                    try
                     {
-                        var message = $"{duration:F0}ms - {url}";
-                        slowRequests.Add(message);
+                        var body = await response.BodyAsync();
+                        sizeBytes = body.Length;
+                    }
+                    catch
+                    {
+                        // Some responses (redirects, websockets) won't have a body
+                    }
+
+                    allNetworkRequests.Add(new NetworkRequestData
+                    {
+                        DurationMs = duration,
+                        Url = url,
+                        ResponseSizeBytes = sizeBytes
+                    });
+
+                    if (duration > 1500)
+                    {
+                        slowRequests.Add($"{duration:F0}ms - {url}");
                     }
                     DateTime removed;
-                    requestStartTimes.TryRemove(url, out removed); // Clean up
+                    requestStartTimes.TryRemove(url, out removed);
                 }
             };
-            
             await page.GotoAsync($"{BaseUrl}/login");
             await TestHelper.FinishLogin(page, "2026", TestTenant);
         }
@@ -138,6 +172,14 @@ namespace QA.AutomationTests
 
             if (allNetworkRequests != null && allNetworkRequests.Any())
             {
+                Console.WriteLine($"\n📡 Network requests: {allNetworkRequests.Count}");
+                foreach (var req in allNetworkRequests)
+                {
+                    var sizeKB = req.ResponseSizeBytes / 1024.0;
+                    var warning = sizeKB > 1024 ? " ⚠️ LARGE RESPONSE" : "";
+                    Console.WriteLine($"  {req.DurationMs:F0}ms - {sizeKB:F1}KB{warning} - {req.Url}");
+                }
+
                 try
                 {
                     await LogNetworkRequestsToFile();
@@ -197,11 +239,8 @@ namespace QA.AutomationTests
                 ? timedOperations[operationName]
                 : -1;
         }
-
         private async Task LogNetworkRequestsToFile()
         {
-            // In CI: write to repo root (for artifacts)
-            // Locally: write to temp folder (to avoid VS freeze)
             var logDirectory = Environment.GetEnvironmentVariable("GITHUB_WORKSPACE") != null
                 ? Path.Combine(Environment.GetEnvironmentVariable("GITHUB_WORKSPACE")!, "network-logs")
                 : Path.Combine(Path.GetTempPath(), "OriginNetworkLogs");
@@ -220,22 +259,18 @@ namespace QA.AutomationTests
             {
                 if (!fileExists)
                 {
-                    await writer.WriteLineAsync("Date,Timestamp,Env,Category,DurationMs,Url");
+                    await writer.WriteLineAsync("Date,Timestamp,Env,Category,DurationMs,ResponseSizeKB,Url");
                 }
 
                 foreach (var req in allNetworkRequests)
                 {
-                    var parts = req.Replace("📡 ", "").Split(new[] { "ms - " }, StringSplitOptions.None);
-                    if (parts.Length == 2)
-                    {
-                        var duration = parts[0].Trim();
-                        var url = parts[1].Trim().Replace(",", ";");
-                        var category = GetCategory(url);
-                        var date = timestamp.ToString("yyyy-MM-dd");
-                        var time = timestamp.ToString("yyyy-MM-dd HH:mm:ss");
+                    var url = req.Url.Replace(",", ";");
+                    var category = GetCategory(url);
+                    var date = timestamp.ToString("yyyy-MM-dd");
+                    var time = timestamp.ToString("yyyy-MM-dd HH:mm:ss");
+                    var sizeKB = (req.ResponseSizeBytes / 1024.0).ToString("F1");
 
-                        await writer.WriteLineAsync($"{date},{time},{testEnv},{category},{duration},{url}");
-                    }
+                    await writer.WriteLineAsync($"{date},{time},{testEnv},{category},{req.DurationMs:F0},{sizeKB},{url}");
                 }
 
                 await writer.FlushAsync();
@@ -243,6 +278,51 @@ namespace QA.AutomationTests
 
             Console.WriteLine($"✅ Logs written to: {logDirectory}");
         }
+        //private async Task LogNetworkRequestsToFile()
+        //{
+        //    // In CI: write to repo root (for artifacts)
+        //    // Locally: write to temp folder (to avoid VS freeze)
+        //    var logDirectory = Environment.GetEnvironmentVariable("GITHUB_WORKSPACE") != null
+        //        ? Path.Combine(Environment.GetEnvironmentVariable("GITHUB_WORKSPACE")!, "network-logs")
+        //        : Path.Combine(Path.GetTempPath(), "OriginNetworkLogs");
+
+        //    Directory.CreateDirectory(logDirectory);
+
+        //    var timestamp = DateTime.UtcNow;
+        //    var fileName = $"network-requests-{timestamp:yyyy-MM-dd HHmmss}.csv";
+        //    var filePath = Path.Combine(logDirectory, fileName);
+
+        //    bool fileExists = File.Exists(filePath);
+
+        //    var testEnv = GetEnvironmentFromBaseUrl(BaseUrl);
+
+        //    await using (var writer = new StreamWriter(filePath, append: true))
+        //    {
+        //        if (!fileExists)
+        //        {
+        //            await writer.WriteLineAsync("Date,Timestamp,Env,Category,DurationMs,Url");
+        //        }
+
+        //        foreach (var req in allNetworkRequests)
+        //        {
+        //            var parts = req.Replace("📡 ", "").Split(new[] { "ms - " }, StringSplitOptions.None);
+        //            if (parts.Length == 2)
+        //            {
+        //                var duration = parts[0].Trim();
+        //                var url = parts[1].Trim().Replace(",", ";");
+        //                var category = GetCategory(url);
+        //                var date = timestamp.ToString("yyyy-MM-dd");
+        //                var time = timestamp.ToString("yyyy-MM-dd HH:mm:ss");
+
+        //                await writer.WriteLineAsync($"{date},{time},{testEnv},{category},{duration},{url}");
+        //            }
+        //        }
+
+        //        await writer.FlushAsync();
+        //    }
+
+        //    Console.WriteLine($"✅ Logs written to: {logDirectory}");
+        //}
 
         private string GetCategory(string url)
         {
@@ -285,7 +365,14 @@ namespace QA.AutomationTests
 
             return "Unknown";
         }
+
     }
 
-    
+    public class NetworkRequestData
+    {
+        public double DurationMs { get; set; }
+        public string Url { get; set; } = "";
+        public long ResponseSizeBytes { get; set; }
+    }
+
 }
