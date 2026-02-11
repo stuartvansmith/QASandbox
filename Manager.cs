@@ -193,11 +193,15 @@ namespace QA.AutomationTests
         {
             await page.GetByRole(AriaRole.Link, new() { Name = "star_border Benefits" }).ClickAsync();
 
-            
+
+            // Give the page time to fully render
+            await page.WaitForLoadStateAsync(LoadState.NetworkIdle);
+            await Task.Delay(1500); // Match debug mode's natural delay
+
             var year = page
-                    .Locator("i.rzi", new() { HasText = "calendar_month" })
-                    .Locator("xpath=ancestor::div[contains(@class,'rz-form-field')]")
-                    .Locator(".rz-dropdown");
+                .Locator("i.rzi", new() { HasText = "calendar_month" })
+                .Locator("xpath=ancestor::div[contains(@class,'rz-form-field')]")
+                .Locator(".rz-dropdown");
 
             await year.ClickAsync();
             await year.PressAsync("ArrowDown");

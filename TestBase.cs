@@ -14,7 +14,7 @@ namespace QA.AutomationTests
         
         protected static string? authPath;
         protected static string BaseUrl => Environment.GetEnvironmentVariable("TEST_BASE_URL")
-                                       ?? "https://staging.originbenefits.ai/"; // Default fallback
+                                       ?? "https://web-origin-live.azurewebsites.net"; // Default fallback
 
         
 
