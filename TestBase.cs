@@ -36,6 +36,11 @@ namespace QA.AutomationTests
             namedTimers?.Clear();
             timedOperations?.Clear();
             allNetworkRequests?.Clear();
+            // Remove Userflow overlay that blocks clicks
+            await page.EvaluateAsync(@"() => {
+                const el = document.getElementById('userflow-ui');
+                if (el) el.remove();
+            }");
         }
 
         [ClassInitialize(InheritanceBehavior.BeforeEachDerivedClass)]
