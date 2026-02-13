@@ -80,11 +80,7 @@ namespace QA.AutomationTests
 
             page = await browserContext.NewPageAsync();
 
-            // Block Userflow from loading entirely
-            await page.RouteAsync("**/*userflow*", async route =>
-            {
-                await route.AbortAsync();
-            });
+  
 
             
             slowRequests = new List<string>();
@@ -151,6 +147,11 @@ namespace QA.AutomationTests
             };
             await page.GotoAsync($"{BaseUrl}/login");
             await TestHelper.FinishLogin(page, "2026", TestTenant);
+            // Block Userflow from loading entirely
+            await page.RouteAsync("**/*userflow*", async route =>
+            {
+                await route.AbortAsync();
+            });
         }
 
         [TestCleanup]
