@@ -147,8 +147,8 @@ namespace QA.AutomationTests
             };
             await page.GotoAsync($"{BaseUrl}/login");
             await TestHelper.FinishLogin(page, "2026", TestTenant);
-            // Block Userflow from loading entirely
-            await page.RouteAsync("**/*userflow*", async route =>
+            //block userflow
+            await page.RouteAsync("https://js.userflow.com/**", async route =>
             {
                 await route.AbortAsync();
             });
