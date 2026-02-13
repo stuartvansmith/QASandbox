@@ -14,7 +14,7 @@ namespace QA.AutomationTests
         
         protected static string? authPath;
         protected static string BaseUrl => Environment.GetEnvironmentVariable("TEST_BASE_URL")
-                                       ?? "https://web-origin-live.azurewebsites.net"; // Default fallback
+                                       ?? "https://localhost:7065"; // Default fallback
 
         
 
@@ -36,11 +36,7 @@ namespace QA.AutomationTests
             namedTimers?.Clear();
             timedOperations?.Clear();
             allNetworkRequests?.Clear();
-            // Remove Userflow overlay that blocks clicks
-            await page.EvaluateAsync(@"() => {
-                const el = document.getElementById('userflow-ui');
-                if (el) el.remove();
-            }");
+
         }
 
         [ClassInitialize(InheritanceBehavior.BeforeEachDerivedClass)]
@@ -84,6 +80,13 @@ namespace QA.AutomationTests
 
             page = await browserContext.NewPageAsync();
 
+            // Block Userflow from loading entirely
+            await page.RouteAsync("**/*userflow*", async route =>
+            {
+                await route.AbortAsync();
+            });
+
+            
             slowRequests = new List<string>();
             requestStartTimes = new ConcurrentDictionary<string, DateTime>();
 
