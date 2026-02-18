@@ -1,27 +1,26 @@
 ﻿using Microsoft.Playwright;
 using System.Collections.Concurrent;
-using System.Runtime.InteropServices.Marshalling;
+
 
 namespace QA.AutomationTests
 {
     [TestClass]
     public class TestBase
     {
-        protected static IBrowser browser;
-        protected static IPage page;
-        protected static IPlaywright playwright;
-        protected static IBrowserContext browserContext;
-        
+        protected static IBrowser browser = null!;
+        protected static IPage page = null!;
+        protected static IPlaywright playwright = null!;
+        protected static IBrowserContext browserContext = null!;
+
         protected static string? authPath;
         protected static string BaseUrl => Environment.GetEnvironmentVariable("TEST_BASE_URL")
                                        ?? "https://localhost:7065"; // Default fallback
 
-        
 
         protected static string TestTenant => Environment.GetEnvironmentVariable("TEST_TENANT")
                                       ?? "Smoke Test"; // Default fallback
-        protected static List<string> slowRequests;
-        protected static ConcurrentDictionary<string, DateTime> requestStartTimes; // Add this
+        protected static List<string> slowRequests = null!;
+        protected static ConcurrentDictionary<string, DateTime> requestStartTimes = null!; // Add this
         protected static Dictionary<string, DateTime> namedTimers = new Dictionary<string, DateTime>();
         protected static Dictionary<string, double> timedOperations = new Dictionary<string, double>();
 
@@ -92,25 +91,7 @@ namespace QA.AutomationTests
                 requestStartTimes[request.Url] = DateTime.Now;
             };
 
-            // Track when responses arrive
-            //page.Response += async (_, response) =>
-            //{
-            //    var url = response.Url;
 
-            //    if (requestStartTimes.TryGetValue(url, out var startTime))
-            //    {
-            //        var duration = (DateTime.Now - startTime).TotalMilliseconds;
-            //        allNetworkRequests.Add($"📡 {duration:F0}ms - {url}");
-
-            //        if (duration > 1500) 
-            //        {
-            //            var message = $"{duration:F0}ms - {url}";
-            //            slowRequests.Add(message);
-            //        }
-            //        DateTime removed;
-            //        requestStartTimes.TryRemove(url, out removed); // Clean up
-            //    }
-            //};
             page.Response += async (_, response) =>
             {
                 var url = response.Url;
@@ -127,7 +108,7 @@ namespace QA.AutomationTests
                     }
                     catch
                     {
-                        // Some responses (redirects, websockets) won't have a body
+                        
                     }
 
                     allNetworkRequests.Add(new NetworkRequestData
@@ -147,7 +128,7 @@ namespace QA.AutomationTests
             };
             await page.GotoAsync($"{BaseUrl}/login");
             await TestHelper.FinishLogin(page, "2026", TestTenant);
-            //block userflow
+            
             await page.RouteAsync("https://js.userflow.com/**", async route =>
             {
                 await route.AbortAsync();
@@ -227,12 +208,6 @@ namespace QA.AutomationTests
             {
                 var duration = (DateTime.Now - startTime).TotalMilliseconds;
                 timedOperations[operationName] = duration;
-                //Console.WriteLine($"✅ Completed: {operationName} took {duration:F0}ms");
-
-                //if (duration > 64738) // Flag operations over 5 seconds
-                //{
-                //    Console.WriteLine($"⚠️ WARNING: {operationName} took longer than expected!");
-                //}
 
                 namedTimers.Remove(operationName);
             }
@@ -287,51 +262,7 @@ namespace QA.AutomationTests
 
             Console.WriteLine($"✅ Logs written to: {logDirectory}");
         }
-        //private async Task LogNetworkRequestsToFile()
-        //{
-        //    // In CI: write to repo root (for artifacts)
-        //    // Locally: write to temp folder (to avoid VS freeze)
-        //    var logDirectory = Environment.GetEnvironmentVariable("GITHUB_WORKSPACE") != null
-        //        ? Path.Combine(Environment.GetEnvironmentVariable("GITHUB_WORKSPACE")!, "network-logs")
-        //        : Path.Combine(Path.GetTempPath(), "OriginNetworkLogs");
 
-        //    Directory.CreateDirectory(logDirectory);
-
-        //    var timestamp = DateTime.UtcNow;
-        //    var fileName = $"network-requests-{timestamp:yyyy-MM-dd HHmmss}.csv";
-        //    var filePath = Path.Combine(logDirectory, fileName);
-
-        //    bool fileExists = File.Exists(filePath);
-
-        //    var testEnv = GetEnvironmentFromBaseUrl(BaseUrl);
-
-        //    await using (var writer = new StreamWriter(filePath, append: true))
-        //    {
-        //        if (!fileExists)
-        //        {
-        //            await writer.WriteLineAsync("Date,Timestamp,Env,Category,DurationMs,Url");
-        //        }
-
-        //        foreach (var req in allNetworkRequests)
-        //        {
-        //            var parts = req.Replace("📡 ", "").Split(new[] { "ms - " }, StringSplitOptions.None);
-        //            if (parts.Length == 2)
-        //            {
-        //                var duration = parts[0].Trim();
-        //                var url = parts[1].Trim().Replace(",", ";");
-        //                var category = GetCategory(url);
-        //                var date = timestamp.ToString("yyyy-MM-dd");
-        //                var time = timestamp.ToString("yyyy-MM-dd HH:mm:ss");
-
-        //                await writer.WriteLineAsync($"{date},{time},{testEnv},{category},{duration},{url}");
-        //            }
-        //        }
-
-        //        await writer.FlushAsync();
-        //    }
-
-        //    Console.WriteLine($"✅ Logs written to: {logDirectory}");
-        //}
 
         private string GetCategory(string url)
         {

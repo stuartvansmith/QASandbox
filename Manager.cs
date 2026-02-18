@@ -20,7 +20,7 @@ namespace QA.AutomationTests
                 await page.GetByRole(AriaRole.Button, new() { Name = "more_vert" }).ClickAsync(new() { Timeout = 2000 });
                 await page.Locator("span").Filter(new() { HasTextRegex = new Regex("^Archive$") }).ClickAsync(new() { Timeout = 2000 });
             }
-            catch (Exception ex) { }
+            catch (Exception) { }
 
 
             await page.GetByText("architectureDraft policies").ClickAsync();

@@ -7,7 +7,7 @@ public class QAPair
 {
     public int Number { get; set; }
     public string Country { get; set; } = "";
-    public string FilteredOn { get; set; } = "";
+    public string? FilteredOn { get; set; } = "";
     public string Question { get; set; } = "";
     public string Answer { get; set; } = "";
 }
@@ -26,7 +26,7 @@ public class AskCuidoDemoQuestions : TestBase
         int counter = 1;
         string lastCountry = string.Empty;
 
-        async Task AskAndRecord(string question, string filterOnBen = null, string country = null)
+        async Task AskAndRecord(string question, string? filterOnBen = null, string? country = null)
         {
 
             if (country != null)
