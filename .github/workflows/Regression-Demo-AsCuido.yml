@@ -64,3 +64,37 @@ jobs:
           name: askcuido-results
           path: AskCuidoResults/**
           retention-days: 90
+      - name: Upload network logs to Blob Storage
+        if: always()
+        shell: pwsh
+        run: |
+            $body = @{
+            grant_type    = "client_credentials"
+            client_id     = "${{ secrets.AZURE_CLIENT_ID }}"
+            client_secret = "${{ secrets.AZURE_CLIENT_SECRET }}"
+            scope         = "https://storage.azure.com/.default"
+            }
+            $tokenResponse = Invoke-RestMethod `
+            -Uri "https://login.microsoftonline.com/${{ secrets.AZURE_TENANT_ID }}/oauth2/v2.0/token" `
+            -Method POST -Body $body
+            $token = $tokenResponse.access_token
+
+            $account = "${{ secrets.AZURE_STORAGE_ACCOUNT }}"
+            $container = "browsernetworklogs"
+
+            $files = Get-ChildItem -Path "network-logs" -Recurse -File
+            foreach ($file in $files) {
+            $uri = "https://$account.blob.core.windows.net/$container/$($file.Name)"
+            
+            $fileBytes = [System.IO.File]::ReadAllBytes($file.FullName)
+            Invoke-RestMethod -Uri $uri -Method PUT `
+                -Headers @{
+                Authorization    = "Bearer $token"
+                "x-ms-blob-type" = "BlockBlob"
+                "x-ms-version"   = "2020-10-02"
+                "Content-Type"   = "text/csv"
+                } `
+                -Body $fileBytes
+            }
+          
+            Write-Host "All files uploaded to Blob Storage"
