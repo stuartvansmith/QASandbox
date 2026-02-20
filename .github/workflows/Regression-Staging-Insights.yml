@@ -73,7 +73,7 @@ jobs:
             $token = $tokenResponse.access_token
 
             $account = "${{ secrets.AZURE_STORAGE_ACCOUNT }}"
-            $container = "network-logs"
+            $container = "browsernetworklogs"
 
             $files = Get-ChildItem -Path "network-logs" -Recurse -File
             foreach ($file in $files) {
