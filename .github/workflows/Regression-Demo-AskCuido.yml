@@ -1,4 +1,4 @@
-name: QA - Regression Demo AsCuido
+name: QA - Regression Demo AskCuido
 on:
     workflow_dispatch:
 jobs:
