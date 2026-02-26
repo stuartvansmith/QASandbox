@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>net8.0</TargetFramework>
@@ -40,7 +40,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Include=".github\workflows\Regression-Demo-AsCuido.yml" />
+    <None Include=".github\workflows\Regression-Demo-AskCuido.yml" />
     <None Include=".github\workflows\Regression-Staging-Insights.yml" />
     <None Include=".github\workflows\SmokeTest-Live.yml" />
     <None Include=".github\workflows\SmokeTest-Demo.yml" />

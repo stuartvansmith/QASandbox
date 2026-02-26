@@ -122,11 +122,18 @@ namespace QA.AutomationTests
             await page.GetByRole(AriaRole.Option, new() { Name = "Critical illness" }).ClickAsync();
 
             await page.GetByText("None").Nth(2).ClickAsync();
-            await page.GetByRole(AriaRole.Option, new() { Name = "Annual" }).ClickAsync();
+            await page.GetByRole(AriaRole.Option, new() { Name = benefit.BenefitTerm.ToString() }).ClickAsync();
 
-
-            await page.Locator("input[name='Benefit term period']").EvaluateAsync("el => el.parentElement.click()");
-            await page.GetByRole(AriaRole.Option, new() { Name = benefit.Period.ToString() }).ClickAsync();
+            if (benefit.BenefitTerm == BenefitTerm.Annual)
+            {
+                await page.Locator("input[name='Benefit term period']").EvaluateAsync("el => el.parentElement.click()");
+                await page.GetByRole(AriaRole.Option, new() { Name = benefit.Period.ToString() }).ClickAsync();
+            }
+            else if (benefit.BenefitTerm == BenefitTerm.Indefinite)
+            {
+                await page.Locator("input[name='Start benefit term period']").EvaluateAsync("el => el.parentElement.click()");
+                await page.GetByRole(AriaRole.Option, new() { Name = benefit.Period.ToString() }).ClickAsync();
+            }
 
             await page.GetByRole(AriaRole.Button, new() { Name = "> Next" }).ClickAsync();
 
@@ -159,15 +166,17 @@ namespace QA.AutomationTests
 
    
 
-
-            await page.Locator("input[name=\"End Date\"]").ClickAsync();
             await page.Locator("[id=\"Start Date\"]").DblClickAsync();
             await page.Locator("[id=\"Start Date\"]").FillAsync($"01/01/{benefit.Period}");
             await page.Locator("[id=\"Start Date\"]").PressAsync("Tab");
-            await page.Locator("input[name=\"End Date\"]").FillAsync($"31/12/{benefit.Period}");
-            await page.Locator("input[name=\"End Date\"]").PressAsync("Tab");
-            await page.Locator("[id=\"Renewal Date\"]").FillAsync($"01/01/{benefit.Period+1}");
-            await page.Locator("[id=\"Renewal Date\"]").PressAsync("Tab");
+            if (benefit.BenefitTerm != BenefitTerm.Indefinite)
+            {
+                await page.Locator("input[name=\"End Date\"]").FillAsync($"31/12/{benefit.Period}");
+                await page.Locator("input[name=\"End Date\"]").PressAsync("Tab");
+                await page.Locator("[id=\"Renewal Date\"]").FillAsync($"01/01/{benefit.Period + 1}");
+                await page.Locator("[id=\"Renewal Date\"]").PressAsync("Tab");
+            }
+            
 
             await page.Locator("input[name='Provider']").EvaluateAsync("el => el.parentElement.click()");
             await page.GetByRole(AriaRole.Option, new() { Name = "Provider One" }).ClickAsync();

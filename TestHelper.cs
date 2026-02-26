@@ -109,11 +109,19 @@ namespace QA.AutomationTests
         internal static async Task AskCuidoQuestion(IPage page, string question, string filterOnBen)
         {
 
-            await page.GetByRole(AriaRole.Link, new() { Name = "image Ask Cuido" }).ClickAsync(new() { Timeout = 30000 });
+            await page.GetByRole(AriaRole.Link, new() { Name = "image Ask Cuido" }).ClickAsync(new() { Timeout = 10000 });
 
-            var editBtn = page.GetByRole(AriaRole.Button, new() { Name = "edit_square" });
+            try
+            {
+                var editBtn = page.GetByRole(AriaRole.Button, new() { Name = "edit_square" });
 
-            await editBtn.ClickAsync(new() { Timeout = 30000 });
+                await editBtn.ClickAsync(new() { Timeout = 10000 });
+            }
+            catch (Exception)
+            {
+
+                
+            }
 
 
             bool ratingQuestion = await page.GetByText("Overall, how satisfied were you with Cuido’s last conversation?").IsVisibleAsync();
@@ -160,30 +168,27 @@ namespace QA.AutomationTests
 
         internal static async Task SwitchCountry(IPage page, string countryName, int timeoutMs = 60000)
         {
-
-            var regionPicker = page.Locator("div.rz-dropdown.rz-clear").Last;
-            await regionPicker.ClickAsync();
-
+            //var regionPicker = page.Locator("div.rz-dropdown.rz-clear").Filter(new() { Has = page.Locator("input[aria-label='Region filter']") });
+            //var regionPicker = page.Locator(".country-picker-map").Locator("..").Locator("div.rz-dropdown.rz-clear");
+            //await regionPicker.ClickAsync();
+            var regionPicker = page.Locator("div.rz-dropdown.rz-clear").Filter(new() { Has = page.Locator("input[name='Region filter']") });
+            await regionPicker.Locator("span.rz-dropdown-label").ClickAsync();
             var listbox = page.GetByRole(AriaRole.Listbox).Last;
             await listbox.WaitForAsync(new()
             {
                 State = WaitForSelectorState.Visible,
                 Timeout = timeoutMs
             });
-
             var option = listbox.GetByText(countryName, new() { Exact = true }).First;
-
             await option.ClickAsync(new()
             {
                 Timeout = timeoutMs
             });
-
             await listbox.WaitForAsync(new()
             {
                 State = WaitForSelectorState.Hidden,
                 Timeout = timeoutMs
             });
-
         }
 
         internal static async Task<string> WaitForCuidoAnswer(IPage page)

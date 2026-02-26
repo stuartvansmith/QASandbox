@@ -14,7 +14,7 @@ namespace QA.AutomationTests
 
         protected static string? authPath;
         protected static string BaseUrl => Environment.GetEnvironmentVariable("TEST_BASE_URL")
-                                       ?? "https://localhost:7065"; // Default fallback
+                                       ?? "https://staging.originbenefits.ai"; // Default fallback
 
 
         protected static string TestTenant => Environment.GetEnvironmentVariable("TEST_TENANT")
@@ -29,13 +29,13 @@ namespace QA.AutomationTests
                        ?? Directory.GetParent(Environment.CurrentDirectory)!.Parent!.Parent!.FullName;
 
         [TestInitialize]
-        public virtual async Task TestSetup()
+        public virtual Task TestSetup()
         {
             slowRequests?.Clear();
             namedTimers?.Clear();
             timedOperations?.Clear();
             allNetworkRequests?.Clear();
-
+            return Task.CompletedTask;
         }
 
         [ClassInitialize(InheritanceBehavior.BeforeEachDerivedClass)]
